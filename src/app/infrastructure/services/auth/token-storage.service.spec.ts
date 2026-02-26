@@ -25,6 +25,16 @@ describe('TokenStorageService', () => {
     expect(service.isTokenValid()).toBe(false);
   });
 
+  it('should mark token as valid when not expired', () => {
+    service.saveToken('valid-token', Date.now() + 60_000);
+
+    expect(service.isTokenValid()).toBe(true);
+  });
+
+  it('should mark token as invalid when token is missing', () => {
+    expect(service.isTokenValid()).toBe(false);
+  });
+
   it('should clear token data', () => {
     service.saveToken('my-token', Date.now() + 60_000);
 
