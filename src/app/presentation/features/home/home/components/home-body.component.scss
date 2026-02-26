@@ -1,0 +1,172 @@
+.body {
+  padding: 1.5rem 2rem;
+}
+
+.admin-dashboard {
+  margin-top: 0.25rem;
+}
+
+.admin-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.6rem;
+  margin: 0.75rem 0;
+}
+
+input,
+button {
+  padding: 0.55rem;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-dashboard {
+  overflow-x: auto;
+}
+
+.users-table th,
+.users-table td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.error {
+  color: #b42318;
+}
+
+.scrum-dashboard {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.scrum-management,
+.project-catalog {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.project-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.6rem;
+  margin: 0.75rem 0;
+}
+
+.project-form textarea {
+  grid-column: 1 / -1;
+  padding: 0.55rem;
+}
+
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+
+.project-catalog {
+  margin-top: 1rem;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.project-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.9rem;
+  background: #fcfcfd;
+}
+
+.project-card__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.project-card__header h3 {
+  margin: 0 0 0.4rem;
+}
+
+.project-card__header small {
+  color: #475467;
+}
+
+.project-edit-form {
+  margin-top: 0.8rem;
+  border-top: 1px solid #eaecf0;
+  padding-top: 0.8rem;
+}
+
+.hu-editor {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.hu-item {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 0.9fr auto;
+  gap: 0.5rem;
+  padding: 0.55rem;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.hu-item select {
+  padding: 0.55rem;
+}
+
+.projects-list select {
+  padding: 0.55rem;
+}
+
+pre {
+  background: #111827;
+  color: #f9fafb;
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+  .body {
+    padding: 1rem;
+  }
+
+  .admin-form {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+  }
+
+  .hu-item {
+    grid-template-columns: 1fr;
+  }
+
+  .scrum-management,
+  .project-catalog {
+    padding: 0.75rem;
+  }
+}

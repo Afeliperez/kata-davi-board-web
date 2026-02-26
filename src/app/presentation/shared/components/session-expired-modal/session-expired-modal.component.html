@@ -1,0 +1,7 @@
+<div class="overlay" *ngIf="sessionUiService.isOpen()">
+  <div class="modal">
+    <h3>Sesión expirada</h3>
+    <p>{{ sessionUiService.message() }}</p>
+    <button type="button" (click)="close()">Entendido</button>
+  </div>
+</div>

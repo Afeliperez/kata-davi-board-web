@@ -1,0 +1,16 @@
+<main class="project-board-page">
+  <header class="project-board-page__header">
+    <button type="button" (click)="goBack()">Volver a proyectos</button>
+    <p *ngIf="endpointUsed"><strong>Endpoint:</strong> {{ endpointUsed }}</p>
+  </header>
+
+  <p *ngIf="isLoading">Cargando tablero...</p>
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+  <app-scrum-project-board
+    *ngIf="!isLoading && project"
+    [project]="project"
+    [canEdit]="isScrum"
+    (huMoved)="onHuMoved($event)"
+  ></app-scrum-project-board>
+</main>

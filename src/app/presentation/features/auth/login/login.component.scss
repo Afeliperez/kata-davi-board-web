@@ -1,0 +1,42 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+form {
+  width: min(360px, 90vw);
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+input,
+button {
+  padding: 0.65rem;
+}
+
+.field-error {
+  margin: 0;
+  color: #b42318;
+  font-size: 0.85rem;
+}
+
+.helper-text {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+}
+
+.contact-button {
+  display: inline-block;
+  padding: 0.65rem;
+  border-radius: 6px;
+  border: 1px solid #d0d5dd;
+  text-align: center;
+  text-decoration: none;
+  color: #1f2937;
+}

@@ -1,0 +1,97 @@
+.scrum-board {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.project-meta {
+  margin: 0.5rem 0 0.75rem;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(220px, 1fr));
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.column {
+  background: #f3f4f6;
+  border-radius: 8px;
+  padding: 0.6rem;
+  min-height: 180px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.column.cdk-drop-list-dragging {
+  background: #e0ecff;
+  border: 1px dashed #2563eb;
+}
+
+.card {
+  background: #fff;
+  border-radius: 6px;
+  padding: 0.55rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #e5e7eb;
+  cursor: grab;
+}
+
+.card.card-status-backlog {
+  background: #f5f3ff;
+  border-color: #ddd6fe;
+}
+
+.card.card-status-por-hacer {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.card.card-status-en-curso {
+  background: #ecfeff;
+  border-color: #a5f3fc;
+}
+
+.card.card-status-test {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.card.card-status-validacion-po {
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+
+.card.card-status-finalizado {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.card.card-status-default {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.card.cdk-drag-preview {
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.2);
+}
+
+.card.cdk-drag-placeholder {
+  opacity: 0.35;
+}
+
+.card p {
+  margin: 0.35rem 0;
+}
+
+@media (max-width: 768px) {
+  .scrum-board {
+    padding: 0.75rem;
+  }
+
+  .board {
+    grid-template-columns: repeat(6, minmax(180px, 1fr));
+  }
+}

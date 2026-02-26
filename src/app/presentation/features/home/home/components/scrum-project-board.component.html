@@ -1,0 +1,32 @@
+<section class="scrum-board">
+  <h2>Tablero del proyecto</h2>
+
+  <p *ngIf="!project">Selecciona un proyecto para visualizar su tablero.</p>
+
+  <ng-container *ngIf="project">
+    <p class="project-meta"><strong>PRO seleccionado:</strong> {{ project.pro }} - {{ project.projectName }}</p>
+    <div class="board" cdkDropListGroup>
+      <section
+        class="column"
+        *ngFor="let column of columns"
+        cdkDropList
+        [cdkDropListData]="column.cards"
+        (cdkDropListDropped)="onDrop($event, column.statusValue)"
+      >
+        <h4>{{ column.title }}</h4>
+        <article
+          class="card"
+          *ngFor="let item of column.cards"
+          cdkDrag
+          [cdkDragData]="item"
+          [cdkDragDisabled]="!canEdit"
+          [ngClass]="getCardStatusClass(item.status)"
+        >
+          <strong>{{ item.hu }}</strong>
+          <p>{{ item.descripcion }}</p>
+          <small>Status: {{ item.status }}</small>
+        </article>
+      </section>
+    </div>
+  </ng-container>
+</section>
