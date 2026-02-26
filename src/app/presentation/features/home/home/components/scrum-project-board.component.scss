@@ -9,6 +9,15 @@
   margin: 0.5rem 0 0.75rem;
 }
 
+.permission-warning {
+  margin: 0 0 0.75rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b42318;
+  border-radius: 6px;
+}
+
 .board {
   display: grid;
   grid-template-columns: repeat(6, minmax(220px, 1fr));
@@ -23,6 +32,42 @@
   padding: 0.6rem;
   min-height: 180px;
   transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.column-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #d0d5dd;
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 0.45rem 0.55rem;
+  margin-bottom: 0.55rem;
+  font-weight: 600;
+  color: #101828;
+  cursor: pointer;
+}
+
+.column-toggle:hover {
+  background: #f8fafc;
+}
+
+.column-title {
+  font-size: 0.92rem;
+}
+
+.column-toggle-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  color: #475467;
+}
+
+.column-arrow {
+  font-size: 1.05rem;
+  color: #1d2939;
 }
 
 .column.cdk-drop-list-dragging {

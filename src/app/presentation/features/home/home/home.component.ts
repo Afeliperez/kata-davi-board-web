@@ -24,6 +24,7 @@ export class HomeComponent implements OnInit {
   private readonly authSessionService = inject(AuthSessionService);
 
   userRole = '';
+  currentUserName = '';
   adminSearchTerm = '';
   endpointUsed = '';
   payload: HomePayload | { message: string } | null = null;
@@ -40,10 +41,12 @@ export class HomeComponent implements OnInit {
         this.endpointUsed = '';
         this.payload = null;
         this.userRole = '';
+        this.currentUserName = '';
         this.adminSearchTerm = '';
         return;
       }
 
+      this.currentUserName = user.userName;
       this.userRole = user.role.toUpperCase();
 
       if (this.userRole === 'ADMIN' || this.userRole === 'SM' || this.userRole === 'SCRUM') {

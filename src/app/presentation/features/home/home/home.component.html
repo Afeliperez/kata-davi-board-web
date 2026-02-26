@@ -1,6 +1,7 @@
 <div class="page">
   <app-home-header
     [role]="userRole"
+    [userName]="currentUserName"
     [searchTerm]="adminSearchTerm"
     (searchChanged)="onAdminSearchChanged($event)"
     (logoutRequested)="logout()"

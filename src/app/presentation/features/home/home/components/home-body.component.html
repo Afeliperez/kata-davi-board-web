@@ -1,86 +1,161 @@
 <main class="body">
   <section *ngIf="isAdmin" class="admin-dashboard">
-    <h2>Dashboard de usuarios (ADMIN)</h2>
+    <button type="button" class="section-toggle" (click)="toggleSection('admin')">
+      <span>Dashboard de usuarios (ADMIN)</span>
+      <span class="section-toggle-right">
+        {{ isSectionCollapsed('admin') ? 'Mostrar' : 'Ocultar' }}
+        <span class="section-arrow">{{ isSectionCollapsed('admin') ? '▼' : '▲' }}</span>
+      </span>
+    </button>
 
-    <form [formGroup]="createForm" (ngSubmit)="createUser()" class="admin-form">
-      <input type="text" formControlName="cc" placeholder="Cédula" />
-      <input type="email" formControlName="email" placeholder="Correo" />
-      <input type="text" formControlName="userName" placeholder="Nombre" />
-      <input type="text" formControlName="role" placeholder="Rol" />
-      <input type="password" formControlName="password" placeholder="Contraseña" />
-      <button type="submit">Crear usuario</button>
-    </form>
+    <ng-container *ngIf="!isSectionCollapsed('admin')">
 
-    <p *ngIf="isLoadingUsers">Cargando usuarios...</p>
-    <p class="error" *ngIf="adminError">{{ adminError }}</p>
+      <form [formGroup]="createForm" (ngSubmit)="createUser()" class="admin-form">
+        <input type="text" formControlName="cc" placeholder="Cédula" />
+        <input type="email" formControlName="email" placeholder="Correo" />
+        <input type="text" formControlName="userName" placeholder="Nombre" />
+        <input type="text" formControlName="role" placeholder="Rol" />
+        <input type="password" formControlName="password" placeholder="Contraseña" />
+        <button type="submit">Crear usuario</button>
+      </form>
 
-    <table *ngIf="!isLoadingUsers && filteredUsers.length > 0" class="users-table">
-      <thead>
-        <tr>
-          <th>Cédula</th>
-          <th>Nombre</th>
-          <th>Correo</th>
-          <th>Rol</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of filteredUsers">
-          <td>{{ user.cc }}</td>
-          <td>{{ user.userName }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.role }}</td>
-          <td class="actions">
-            <button type="button" (click)="startEdit(user)">Editar</button>
-            <button type="button" (click)="deleteUser(user.cc)">Eliminar</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+      <p *ngIf="isLoadingUsers">Cargando usuarios...</p>
+      <p class="error" *ngIf="adminError">{{ adminError }}</p>
 
-    <p *ngIf="!isLoadingUsers && filteredUsers.length === 0">No hay usuarios para mostrar.</p>
+      <table *ngIf="!isLoadingUsers && filteredUsers.length > 0" class="users-table">
+        <thead>
+          <tr>
+            <th>Cédula</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers">
+            <td>{{ user.cc }}</td>
+            <td>{{ user.userName }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.role }}</td>
+            <td class="actions">
+              <button type="button" (click)="startEdit(user)">Editar</button>
+              <button type="button" (click)="deleteUser(user.cc)">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-    <form
-      *ngIf="editingCc"
-      [formGroup]="editForm"
-      (ngSubmit)="saveEdit()"
-      class="admin-form"
-    >
-      <h3>Editar usuario {{ editingCc }}</h3>
-      <input type="email" formControlName="email" placeholder="Correo" />
-      <input type="text" formControlName="userName" placeholder="Nombre" />
-      <input type="text" formControlName="role" placeholder="Rol" />
-      <div class="actions">
-        <button type="submit">Guardar cambios</button>
-        <button type="button" (click)="cancelEdit()">Cancelar</button>
-      </div>
-    </form>
+      <p *ngIf="!isLoadingUsers && filteredUsers.length === 0">No hay usuarios para mostrar.</p>
+
+      <form
+        *ngIf="editingCc"
+        [formGroup]="editForm"
+        (ngSubmit)="saveEdit()"
+        class="admin-form"
+      >
+        <h3>Editar usuario {{ editingCc }}</h3>
+        <input type="email" formControlName="email" placeholder="Correo" />
+        <input type="text" formControlName="userName" placeholder="Nombre" />
+        <input type="text" formControlName="role" placeholder="Rol" />
+        <div class="actions">
+          <button type="submit">Guardar cambios</button>
+          <button type="button" (click)="cancelEdit()">Cancelar</button>
+        </div>
+      </form>
+    </ng-container>
   </section>
 
   <section *ngIf="isScrum" class="scrum-dashboard">
     <section class="scrum-management">
-      <h2>Gestión de proyectos (Scrum)</h2>
+      <button type="button" class="section-toggle" (click)="toggleSection('scrum-management')">
+        <span>Gestión de proyectos (Scrum)</span>
+        <span class="section-toggle-right">
+          {{ isSectionCollapsed('scrum-management') ? 'Mostrar' : 'Ocultar' }}
+          <span class="section-arrow">{{ isSectionCollapsed('scrum-management') ? '▼' : '▲' }}</span>
+        </span>
+      </button>
 
-      <form [formGroup]="createProjectForm" (ngSubmit)="createProject()" class="project-form">
-        <input type="text" formControlName="pro" placeholder="Código proyecto (pro)" />
-        <input type="text" formControlName="projectName" placeholder="Nombre del proyecto" />
-        <textarea formControlName="huJson" rows="6" placeholder="HU en JSON"></textarea>
-        <input type="text" formControlName="accesosCsv" placeholder="Accesos separados por coma" />
-        <button type="submit">Crear proyecto</button>
+      <ng-container *ngIf="!isSectionCollapsed('scrum-management')">
+
+      <form [formGroup]="createProjectForm" (ngSubmit)="createProject()" class="project-form create-project-form">
+        <div class="project-form__header">
+          <h3>Crear nuevo proyecto</h3>
+          <p>Define el proyecto y su configuración inicial para el tablero.</p>
+        </div>
+
+        <label class="form-field">
+          <span>Código del proyecto</span>
+          <input type="text" formControlName="pro" placeholder="Ej: PRO_TEST" />
+        </label>
+
+        <label class="form-field">
+          <span>Nombre del proyecto</span>
+          <input type="text" formControlName="projectName" placeholder="Ej: Proyecto Demo" />
+        </label>
+
+        <div class="hu-editor create-hu-editor" formArrayName="huItems">
+          <h4>Historias de usuario</h4>
+
+          <div class="hu-item" *ngFor="let huControl of createHuItemsControls.controls; let i = index" [formGroupName]="i">
+            <input type="text" formControlName="hu" placeholder="HU" />
+            <input type="text" formControlName="descripcion" placeholder="Descripción" />
+            <select formControlName="status">
+              <option *ngFor="let status of projectStatuses" [value]="status">{{ status }}</option>
+            </select>
+            <button type="button" (click)="removeCreateHuItem(i)">Eliminar HU</button>
+          </div>
+
+          <button type="button" (click)="addCreateHuItem()">Agregar HU</button>
+        </div>
+
+        <div class="cedula-editor" formArrayName="accesos">
+          <h4>Cédulas con acceso</h4>
+
+          <div class="cedula-item" *ngFor="let accessControl of createAccessControls.controls; let i = index">
+            <input type="text" [formControlName]="i" placeholder="Cédula" />
+            <button type="button" (click)="removeCreateAccess(i)">Eliminar</button>
+          </div>
+
+          <button type="button" (click)="addCreateAccess()">Agregar cédula</button>
+        </div>
+
+        <div class="project-form__actions">
+          <button type="submit" [disabled]="createProjectForm.invalid">Crear proyecto</button>
+        </div>
       </form>
 
       <p *ngIf="isLoadingProjects">Cargando proyectos...</p>
       <p class="error" *ngIf="scrumError">{{ scrumError }}</p>
+      </ng-container>
     </section>
   </section>
 
   <section *ngIf="shouldShowProjects" class="project-catalog">
-    <h2>Proyectos disponibles</h2>
-    <p *ngIf="!isScrum && endpointUsed"><strong>Endpoint consumido:</strong> {{ endpointUsed }}</p>
+    <button type="button" class="section-toggle" (click)="toggleSection('project-catalog')">
+      <span>Proyectos disponibles</span>
+      <span class="section-toggle-right">
+        {{ isSectionCollapsed('project-catalog') ? 'Mostrar' : 'Ocultar' }}
+        <span class="section-arrow">{{ isSectionCollapsed('project-catalog') ? '▼' : '▲' }}</span>
+      </span>
+    </button>
+
+    <ng-container *ngIf="!isSectionCollapsed('project-catalog')">
+
+    <div class="project-search">
+      <label for="project-search-input">Buscar proyectos</label>
+      <input
+        id="project-search-input"
+        type="text"
+        [(ngModel)]="projectSearchTerm"
+        placeholder="Buscar por PRO, nombre, HU, descripción, status, accesos..."
+      />
+    </div>
+
     <p *ngIf="isLoadingProjects || isLoading">Cargando proyectos...</p>
 
-    <div class="projects-grid" *ngIf="!isLoadingProjects && !isLoading && projects.length > 0">
-      <article class="project-card" *ngFor="let project of projects">
+    <div class="projects-grid" *ngIf="!isLoadingProjects && !isLoading && filteredProjects.length > 0">
+      <article class="project-card" *ngFor="let project of filteredProjects">
         <div class="project-card__header">
           <h3>{{ project.projectName }}</h3>
           <small>{{ project.pro }}</small>
@@ -91,18 +166,28 @@
 
         <div class="actions">
           <button type="button" (click)="viewProjectBoard(project.pro)">Ir al tablero</button>
-          <button type="button" *ngIf="isScrum" (click)="startEditProject(project)">Editar</button>
+          <button type="button" *ngIf="canEditProjectHu" (click)="startEditProject(project)">Editar</button>
           <button type="button" *ngIf="isScrum" (click)="deleteProject(project.pro)">Eliminar</button>
         </div>
 
         <form
-          *ngIf="isScrum && editingProjectPro === project.pro"
+          *ngIf="canEditProjectHu && editingProjectPro === project.pro"
           [formGroup]="editProjectForm"
           (ngSubmit)="saveProject()"
           class="project-form project-edit-form"
         >
-          <input type="text" formControlName="projectName" placeholder="Nombre del proyecto" />
-          <input type="text" formControlName="accesosCsv" placeholder="Accesos separados por coma" />
+          <input *ngIf="!isPo" type="text" formControlName="projectName" placeholder="Nombre del proyecto" />
+
+          <div *ngIf="!isPo" class="cedula-editor cedula-editor--edit" formArrayName="accesos">
+            <h4>Cédulas con acceso</h4>
+
+            <div class="cedula-item" *ngFor="let accessControl of editAccessControls.controls; let i = index">
+              <input type="text" [formControlName]="i" placeholder="Cédula" />
+              <button type="button" class="btn-secondary" (click)="removeEditAccess(i)">Eliminar</button>
+            </div>
+
+            <button type="button" class="btn-secondary" (click)="addEditAccess()">Agregar cédula</button>
+          </div>
 
           <div class="hu-editor" formArrayName="huItems">
             <h4>Historias de usuario</h4>
@@ -110,13 +195,16 @@
             <div class="hu-item" *ngFor="let huControl of huItemsControls.controls; let i = index" [formGroupName]="i">
               <input type="text" formControlName="hu" placeholder="HU" />
               <input type="text" formControlName="descripcion" placeholder="Descripción" />
-              <select formControlName="status">
+              <select *ngIf="!isPo" formControlName="status">
                 <option *ngFor="let status of projectStatuses" [value]="status">{{ status }}</option>
               </select>
-              <button type="button" (click)="removeHuItem(i)">Eliminar HU</button>
+              <div *ngIf="isPo" class="status-readonly">
+                <strong>Status:</strong> {{ huControl.value.status }}
+              </div>
+              <button type="button" class="btn-secondary" (click)="removeHuItem(i)">Eliminar HU</button>
             </div>
 
-            <button type="button" (click)="addHuItem()">Agregar HU</button>
+            <button type="button" class="btn-secondary" (click)="addHuItem()">Agregar HU</button>
           </div>
 
           <div class="actions">
@@ -127,8 +215,9 @@
       </article>
     </div>
 
-    <p *ngIf="!isLoadingProjects && !isLoading && projects.length === 0">
-      No hay proyectos disponibles para este usuario.
+    <p *ngIf="!isLoadingProjects && !isLoading && filteredProjects.length === 0">
+      No hay proyectos que coincidan con la búsqueda.
     </p>
+    </ng-container>
   </section>
 </main>

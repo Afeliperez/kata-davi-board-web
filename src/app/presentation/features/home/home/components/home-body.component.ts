@@ -40,6 +40,8 @@ export class HomeBodyComponent implements OnChanges {
   scrumError = '';
   isLoadingProjects = false;
   editingProjectPro: string | null = null;
+  projectSearchTerm = '';
+  private readonly collapsedSections = new Map<string, boolean>();
   readonly projectStatuses = [
     'backlog',
     'por_hacer',
@@ -66,16 +68,13 @@ export class HomeBodyComponent implements OnChanges {
   readonly createProjectForm = this.formBuilder.nonNullable.group({
     pro: ['', Validators.required],
     projectName: ['', Validators.required],
-    huJson: [
-      '[\n  {\n    "hu": "hola2",\n    "descripcion": "test2",\n    "status": "backlog"\n  }\n]',
-      Validators.required,
-    ],
-    accesosCsv: ['121345,454782,99999', Validators.required],
+    huItems: this.formBuilder.array([this.createHuGroup()], Validators.required),
+    accesos: this.formBuilder.array([this.createAccessControl()], Validators.required),
   });
 
   readonly editProjectForm = this.formBuilder.nonNullable.group({
     projectName: ['', Validators.required],
-    accesosCsv: ['', Validators.required],
+    accesos: this.formBuilder.array([], Validators.required),
     huItems: this.formBuilder.array([]),
   });
 
@@ -97,12 +96,54 @@ export class HomeBodyComponent implements OnChanges {
     return this.role.toUpperCase() === 'SM' || this.role.toUpperCase() === 'SCRUM';
   }
 
+  get isPo(): boolean {
+    return this.role.toUpperCase() === 'PO';
+  }
+
+  get canEditProjectHu(): boolean {
+    return this.isScrum || this.isPo;
+  }
+
   get shouldShowProjects(): boolean {
     return !this.isAdmin;
   }
 
+  get filteredProjects(): ProjectBoardSummary[] {
+    const normalizedTerm = this.projectSearchTerm.trim().toLowerCase();
+
+    if (!normalizedTerm) {
+      return this.projects;
+    }
+
+    return this.projects.filter((project) => {
+      const searchableContent = JSON.stringify(project).toLowerCase();
+      return searchableContent.includes(normalizedTerm);
+    });
+  }
+
   get huItemsControls(): FormArray {
     return this.editProjectForm.controls.huItems as FormArray;
+  }
+
+  get createHuItemsControls(): FormArray {
+    return this.createProjectForm.controls.huItems as FormArray;
+  }
+
+  get createAccessControls(): FormArray {
+    return this.createProjectForm.controls.accesos as FormArray;
+  }
+
+  get editAccessControls(): FormArray {
+    return this.editProjectForm.controls.accesos as FormArray;
+  }
+
+  isSectionCollapsed(sectionKey: string): boolean {
+    return this.collapsedSections.get(sectionKey) ?? false;
+  }
+
+  toggleSection(sectionKey: string): void {
+    const collapsed = this.isSectionCollapsed(sectionKey);
+    this.collapsedSections.set(sectionKey, !collapsed);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -260,13 +301,29 @@ export class HomeBodyComponent implements OnChanges {
       return;
     }
 
-    const parsed = this.parseProjectFields(
-      this.createProjectForm.controls.huJson.value,
-      this.createProjectForm.controls.accesosCsv.value,
-    );
+    const hu = this.createHuItemsControls.controls.map((control) => {
+      const huControl = control as FormGroup;
+      const value = huControl.getRawValue() as HuItem;
+      return {
+        hu: value.hu.trim(),
+        descripcion: value.descripcion.trim(),
+        status: value.status.trim(),
+      };
+    });
 
-    if (!parsed) {
-      this.scrumError = 'HU o accesos con formato inválido.';
+    const hasInvalidHu = hu.some((item) => !item.hu || !item.descripcion || !item.status);
+
+    if (hasInvalidHu || hu.length === 0) {
+      this.scrumError = 'Debes registrar al menos una HU válida.';
+      return;
+    }
+
+    const accesos = this.createAccessControls.controls
+      .map((control) => String(control.value).trim())
+      .filter((value) => value.length > 0);
+
+    if (accesos.length === 0) {
+      this.scrumError = 'Debes registrar al menos una cédula de acceso.';
       return;
     }
 
@@ -276,18 +333,21 @@ export class HomeBodyComponent implements OnChanges {
       .createProject({
         pro: this.createProjectForm.controls.pro.value,
         projectName: this.createProjectForm.controls.projectName.value,
-        hu: parsed.hu,
-        accesos: parsed.accesos,
+        hu,
+        accesos,
       })
       .subscribe({
         next: () => {
           this.createProjectForm.reset({
             pro: '',
             projectName: '',
-            huJson:
-              '[\n  {\n    "hu": "hola2",\n    "descripcion": "test2",\n    "status": "backlog"\n  }\n]',
-            accesosCsv: '121345,454782,99999',
+            huItems: [],
+            accesos: [],
           });
+          this.clearCreateHuItems();
+          this.clearCreateAccessItems();
+          this.addCreateHuItem();
+          this.addCreateAccess();
           this.loadProjectsByRole();
         },
         error: () => {
@@ -297,32 +357,41 @@ export class HomeBodyComponent implements OnChanges {
   }
 
   startEditProject(project: ProjectBoardSummary): void {
-    if (!this.isScrum) {
+    if (!this.canEditProjectHu) {
       return;
     }
 
     this.editingProjectPro = project.pro;
     this.editProjectForm.setValue({
       projectName: project.projectName,
-      accesosCsv: project.accesos.join(','),
+      accesos: [],
       huItems: [],
     });
     this.setHuItems(project.hu);
+    this.setEditAccessItems(project.accesos);
   }
 
   cancelEditProject(): void {
     this.editingProjectPro = null;
     this.editProjectForm.reset({
       projectName: '',
-      accesosCsv: '',
+      accesos: [],
       huItems: [],
     });
     this.clearHuItems();
+    this.clearEditAccessItems();
   }
 
   saveProject(): void {
-    if (!this.isScrum || !this.editingProjectPro || this.editProjectForm.invalid) {
+    if (!this.canEditProjectHu || !this.editingProjectPro || this.editProjectForm.invalid) {
       this.editProjectForm.markAllAsTouched();
+      return;
+    }
+
+    const editingProject = this.projects.find((project) => project.pro === this.editingProjectPro);
+
+    if (!editingProject) {
+      this.scrumError = 'No fue posible encontrar el proyecto a editar.';
       return;
     }
 
@@ -345,21 +414,26 @@ export class HomeBodyComponent implements OnChanges {
       return;
     }
 
-    const accesos = this.editProjectForm.controls.accesosCsv.value
-      .split(',')
-      .map((value) => value.trim())
-      .filter((value) => value.length > 0);
+    const accesos = this.isPo
+      ? editingProject.accesos
+      : this.editAccessControls.controls
+        .map((control) => String(control.value).trim())
+        .filter((value) => value.length > 0);
 
-    if (accesos.length === 0) {
+    if (!this.isPo && accesos.length === 0) {
       this.scrumError = 'Debes registrar al menos un acceso.';
       return;
     }
+
+    const projectName = this.isPo
+      ? editingProject.projectName
+      : this.editProjectForm.controls.projectName.value;
 
     this.scrumError = '';
 
     this.manageSmProjectsUseCase
       .updateProject(this.editingProjectPro, {
-        projectName: this.editProjectForm.controls.projectName.value,
+        projectName,
         hu,
         accesos,
       })
@@ -395,6 +469,10 @@ export class HomeBodyComponent implements OnChanges {
     this.huItemsControls.push(this.createHuGroup());
   }
 
+  addCreateHuItem(): void {
+    this.createHuItemsControls.push(this.createHuGroup());
+  }
+
   removeHuItem(index: number): void {
     if (index < 0 || index >= this.huItemsControls.length) {
       return;
@@ -403,41 +481,40 @@ export class HomeBodyComponent implements OnChanges {
     this.huItemsControls.removeAt(index);
   }
 
-  viewProjectBoard(projectPro: string): void {
-    this.router.navigate(['/home/project-board', projectPro]);
+  removeCreateHuItem(index: number): void {
+    if (index < 0 || index >= this.createHuItemsControls.length || this.createHuItemsControls.length === 1) {
+      return;
+    }
+
+    this.createHuItemsControls.removeAt(index);
   }
 
-  private parseProjectFields(
-    huJson: string,
-    accesosCsv: string,
-  ): { hu: HuItem[]; accesos: string[] } | null {
-    try {
-      const parsedHu = JSON.parse(huJson) as HuItem[];
+  addCreateAccess(): void {
+    this.createAccessControls.push(this.createAccessControl());
+  }
 
-      if (!Array.isArray(parsedHu)) {
-        return null;
-      }
-
-      const validHu = parsedHu.every(
-        (item) =>
-          typeof item.hu === 'string' &&
-          typeof item.descripcion === 'string' &&
-          typeof item.status === 'string',
-      );
-
-      if (!validHu) {
-        return null;
-      }
-
-      const accesos = accesosCsv
-        .split(',')
-        .map((value) => value.trim())
-        .filter((value) => value.length > 0);
-
-      return { hu: parsedHu, accesos };
-    } catch {
-      return null;
+  removeCreateAccess(index: number): void {
+    if (index < 0 || index >= this.createAccessControls.length || this.createAccessControls.length === 1) {
+      return;
     }
+
+    this.createAccessControls.removeAt(index);
+  }
+
+  addEditAccess(): void {
+    this.editAccessControls.push(this.createAccessControl());
+  }
+
+  removeEditAccess(index: number): void {
+    if (index < 0 || index >= this.editAccessControls.length || this.editAccessControls.length === 1) {
+      return;
+    }
+
+    this.editAccessControls.removeAt(index);
+  }
+
+  viewProjectBoard(projectPro: string): void {
+    this.router.navigate(['/home/project-board', projectPro]);
   }
 
   private hydrateProjectsFromPayload(): void {
@@ -470,12 +547,49 @@ export class HomeBodyComponent implements OnChanges {
     }
   }
 
+  private clearCreateHuItems(): void {
+    while (this.createHuItemsControls.length > 0) {
+      this.createHuItemsControls.removeAt(0);
+    }
+  }
+
+  private clearCreateAccessItems(): void {
+    while (this.createAccessControls.length > 0) {
+      this.createAccessControls.removeAt(0);
+    }
+  }
+
+  private clearEditAccessItems(): void {
+    while (this.editAccessControls.length > 0) {
+      this.editAccessControls.removeAt(0);
+    }
+  }
+
+  private setEditAccessItems(accessItems: string[]): void {
+    this.clearEditAccessItems();
+
+    accessItems.forEach((access) => {
+      this.editAccessControls.push(this.createAccessControl(access));
+    });
+
+    if (this.editAccessControls.length === 0) {
+      this.editAccessControls.push(this.createAccessControl());
+    }
+  }
+
   private createHuGroup(item?: HuItem): FormGroup {
     return this.formBuilder.nonNullable.group({
       hu: [item?.hu ?? '', Validators.required],
       descripcion: [item?.descripcion ?? '', Validators.required],
       status: [item?.status ?? 'backlog', Validators.required],
     });
+  }
+
+  private createAccessControl(value = '') {
+    return this.formBuilder.nonNullable.control(value, [
+      Validators.required,
+      Validators.pattern('^[0-9]+$'),
+    ]);
   }
 
 }

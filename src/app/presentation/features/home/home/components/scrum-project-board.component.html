@@ -5,27 +5,42 @@
 
   <ng-container *ngIf="project">
     <p class="project-meta"><strong>PRO seleccionado:</strong> {{ project.pro }} - {{ project.projectName }}</p>
+    <p class="permission-warning" *ngIf="permissionMessage">{{ permissionMessage }}</p>
     <div class="board" cdkDropListGroup>
       <section
         class="column"
         *ngFor="let column of columns"
         cdkDropList
         [cdkDropListData]="column.cards"
+        [cdkDropListDisabled]="isColumnCollapsed(column.statusValue)"
         (cdkDropListDropped)="onDrop($event, column.statusValue)"
       >
-        <h4>{{ column.title }}</h4>
-        <article
-          class="card"
-          *ngFor="let item of column.cards"
-          cdkDrag
-          [cdkDragData]="item"
-          [cdkDragDisabled]="!canEdit"
-          [ngClass]="getCardStatusClass(item.status)"
+        <button
+          type="button"
+          class="column-toggle"
+          (click)="toggleColumn(column.statusValue)"
+          [attr.aria-expanded]="!isColumnCollapsed(column.statusValue)"
         >
-          <strong>{{ item.hu }}</strong>
-          <p>{{ item.descripcion }}</p>
-          <small>Status: {{ item.status }}</small>
-        </article>
+          <span class="column-title">{{ column.title }} ({{ column.cards.length }})</span>
+          <span class="column-toggle-right">
+            {{ isColumnCollapsed(column.statusValue) ? 'Mostrar' : 'Ocultar' }}
+            <span class="column-arrow">{{ isColumnCollapsed(column.statusValue) ? '▼' : '▲' }}</span>
+          </span>
+        </button>
+
+        <ng-container *ngIf="!isColumnCollapsed(column.statusValue)">
+          <article
+            class="card"
+            *ngFor="let item of column.cards"
+            cdkDrag
+            [cdkDragData]="item"
+            [cdkDragDisabled]="!canDragFromStatus(item.status)"
+            [ngClass]="getCardStatusClass(item.status)"
+          >
+            <strong>{{ item.hu }}</strong>
+            <p>{{ item.descripcion }}</p>
+          </article>
+        </ng-container>
       </section>
     </div>
   </ng-container>

@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class HomeHeaderComponent {
   @Input() role = '';
+  @Input() userName = '';
   @Output() logoutRequested = new EventEmitter<void>();
   @Input() searchTerm = '';
   @Output() searchChanged = new EventEmitter<string>();

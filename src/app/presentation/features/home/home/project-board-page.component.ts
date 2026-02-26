@@ -3,16 +3,18 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize, take } from 'rxjs';
 import { GetHomeDataUseCase } from '../../../../application/use-cases/home/get-home-data.use-case';
+import { LogoutUseCase } from '../../../../application/use-cases/auth/logout.use-case';
 import { ManageSmProjectsUseCase } from '../../../../application/use-cases/home/manage-sm-projects.use-case';
 import { AuthUser } from '../../../../domain/ports/auth-repository.port';
 import { HuItem, ProjectBoardSummary } from '../../../../domain/ports/home-data-repository.port';
 import { AuthSessionService } from '../../../../infrastructure/services/auth/auth-session.service';
 import { ScrumProjectBoardComponent } from './components/scrum-project-board.component';
+import { HomeFooterComponent } from './components/home-footer.component';
 
 @Component({
   selector: 'app-project-board-page',
   standalone: true,
-  imports: [CommonModule, ScrumProjectBoardComponent],
+  imports: [CommonModule, ScrumProjectBoardComponent, HomeFooterComponent],
   templateUrl: './project-board-page.component.html',
   styleUrl: './project-board-page.component.scss',
 })
@@ -21,11 +23,14 @@ export class ProjectBoardPageComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly authSessionService = inject(AuthSessionService);
   private readonly getHomeDataUseCase = inject(GetHomeDataUseCase);
+  private readonly logoutUseCase = inject(LogoutUseCase);
   private readonly manageSmProjectsUseCase = inject(ManageSmProjectsUseCase);
 
   endpointUsed = '';
   isLoading = false;
   error = '';
+  currentUserName = '';
+  currentUserRole = '';
   isScrum = false;
   currentPro = '';
   project: ProjectBoardSummary | null = null;
@@ -46,6 +51,11 @@ export class ProjectBoardPageComponent implements OnInit {
     this.router.navigate(['/home']);
   }
 
+  logout(): void {
+    this.logoutUseCase.execute();
+    this.router.navigate(['/login']);
+  }
+
   onHuMoved(event: {
     item: HuItem;
     fromStatus: string;
@@ -54,7 +64,7 @@ export class ProjectBoardPageComponent implements OnInit {
     currentIndex: number;
     sameColumn: boolean;
   }): void {
-    if (!this.project || !this.isScrum) {
+    if (!this.project || !this.canEditBoard) {
       return;
     }
 
@@ -114,6 +124,8 @@ export class ProjectBoardPageComponent implements OnInit {
         return;
       }
 
+      this.currentUserName = user.userName;
+      this.currentUserRole = user.role.toUpperCase();
       this.isScrum = this.isScrumRole(user.role);
 
       if (this.isScrum) {
@@ -180,6 +192,10 @@ export class ProjectBoardPageComponent implements OnInit {
   private isScrumRole(role: string): boolean {
     const normalizedRole = role.toUpperCase();
     return normalizedRole === 'SM' || normalizedRole === 'SCRUM';
+  }
+
+  get canEditBoard(): boolean {
+    return ['SM', 'SCRUM', 'PO', 'DEV', 'QA'].includes(this.currentUserRole);
   }
 
   private getUpdatedHuForMove(
