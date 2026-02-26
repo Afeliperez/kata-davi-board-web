@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { ManageAdminUsersUseCase } from '../../../../../../../application/use-cases/home/manage-admin-users.use-case';
-import { CreateUserCommand, UpdateUserCommand } from '../../../../../../../domain/ports/home-data-repository.port';
+import { ManageAdminUsersUseCase } from '@application/use-cases/home/manage-admin-users.use-case';
+import { CreateUserCommand, UpdateUserCommand } from '@domain/ports/home-data-repository.port';
 
 @Injectable({ providedIn: 'root' })
 export class HomeAdminFacade {

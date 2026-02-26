@@ -5,7 +5,7 @@ import {
   HomeDataRepositoryPort,
   ProjectBoardSummary,
   UpdateProjectCommand,
-} from '../../../domain/ports/home-data-repository.port';
+} from '@domain/ports/home-data-repository.port';
 import { map } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })

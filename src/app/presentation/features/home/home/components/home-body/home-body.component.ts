@@ -8,8 +8,8 @@ import {
   HuItem,
   ProjectBoardSummary,
   UserSummary,
-} from '../../../../../../domain/ports/home-data-repository.port';
-import { ProjectRolePolicyService } from '../../../../../../domain/policies/project-role-policy.service';
+} from '@domain/ports/home-data-repository.port';
+import { ProjectRolePolicyService } from '@domain/policies/project-role-policy.service';
 import { HomeAdminFacade } from '../sections/admin-section/home-admin.facade';
 import { HomeProjectsFacade } from '../../facades/home-projects.facade';
 import { AdminSectionComponent } from '../sections/admin-section/admin-section.component';

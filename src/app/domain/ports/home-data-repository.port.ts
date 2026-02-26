@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AuthUser } from './auth-repository.port';
+import { AuthUser } from '@domain/ports/auth-repository.port';
 
 export interface UserSummary {
   cc: string;

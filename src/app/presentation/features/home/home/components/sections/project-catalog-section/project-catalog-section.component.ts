@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormArray, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ProjectBoardSummary } from '../../../../../../../domain/ports/home-data-repository.port';
+import { ProjectBoardSummary } from '@domain/ports/home-data-repository.port';
 
 @Component({
   selector: 'app-project-catalog-section',

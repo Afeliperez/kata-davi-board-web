@@ -5,7 +5,7 @@ import {
   AuthRepositoryPort,
   AuthSession,
   LoginRequest,
-} from '../../../domain/ports/auth-repository.port';
+} from '@domain/ports/auth-repository.port';
 
 @Injectable({ providedIn: 'root' })
 export class HttpAuthRepository implements AuthRepositoryPort {

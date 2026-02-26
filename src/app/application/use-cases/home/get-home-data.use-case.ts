@@ -3,8 +3,8 @@ import {
   HOME_DATA_REPOSITORY,
   HomeDataRepositoryPort,
   HomeRoleStrategy,
-} from '../../../domain/ports/home-data-repository.port';
-import { AuthUser } from '../../../domain/ports/auth-repository.port';
+} from '@domain/ports/home-data-repository.port';
+import { AuthUser } from '@domain/ports/auth-repository.port';
 
 @Injectable({ providedIn: 'root' })
 export class GetHomeDataUseCase {

@@ -15,10 +15,9 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { ManageSmProjectsUseCase } from '../../../../../../application/use-cases/home/manage-sm-projects.use-case';
-import { HuItem, ProjectBoardSummary } from '../../../../../../domain/ports/home-data-repository.port';
-import { ProjectRolePolicyService } from '../../../../../../domain/policies/project-role-policy.service';
-
+import { ManageSmProjectsUseCase } from '@application/use-cases/home/manage-sm-projects.use-case';
+import { HuItem, ProjectBoardSummary } from '@domain/ports/home-data-repository.port';
+import {ProjectRolePolicyService} from "@domain/policies/project-role-policy.service"
 interface BoardCardVm extends HuItem {
   statusClass: string;
   statusLabel: string;

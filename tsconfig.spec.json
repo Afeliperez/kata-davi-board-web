@@ -2,6 +2,13 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
+    "paths": {
+      "@app/*": ["./src/app/*"],
+      "@application/*": ["./src/app/application/*"],
+      "@domain/*": ["./src/app/domain/*"],
+      "@infrastructure/*": ["./src/app/infrastructure/*"],
+      "@presentation/*": ["./src/app/presentation/*"]
+    },
     "types": ["jest", "node"]
   },
   "files": ["setup-jest.ts"],

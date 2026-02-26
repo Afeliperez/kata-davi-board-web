@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { AuthUser } from '../../../domain/ports/auth-repository.port';
+import { AuthUser } from '@domain/ports/auth-repository.port';
 
 @Injectable({ providedIn: 'root' })
 export class AuthSessionService {

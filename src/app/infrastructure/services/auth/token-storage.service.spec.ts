@@ -1,4 +1,6 @@
-import { TokenStorageService } from './token-storage.service';
+/// <reference types="jest" />
+
+import { TokenStorageService } from '@infrastructure/services/auth/token-storage.service';
 
 describe('TokenStorageService', () => {
   let service: TokenStorageService;

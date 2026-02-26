@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { TokenStorageService } from '../../../infrastructure/services/auth/token-storage.service';
+import { TokenStorageService } from '@infrastructure/services/auth/token-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class CheckSessionUseCase {

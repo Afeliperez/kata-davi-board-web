@@ -4,9 +4,9 @@ import {
   AUTH_REPOSITORY,
   AuthRepositoryPort,
   LoginRequest,
-} from '../../../domain/ports/auth-repository.port';
-import { TokenStorageService } from '../../../infrastructure/services/auth/token-storage.service';
-import { AuthSessionService } from '../../../infrastructure/services/auth/auth-session.service';
+} from '@domain/ports/auth-repository.port';
+import { TokenStorageService } from '@infrastructure/services/auth/token-storage.service';
+import { AuthSessionService } from '@infrastructure/services/auth/auth-session.service';
 
 @Injectable({ providedIn: 'root' })
 export class LoginUseCase {

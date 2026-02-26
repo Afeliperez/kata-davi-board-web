@@ -5,7 +5,7 @@ import {
   HOME_DATA_REPOSITORY,
   HomeDataRepositoryPort,
   UpdateUserCommand,
-} from '../../../domain/ports/home-data-repository.port';
+} from '@domain/ports/home-data-repository.port';
 
 @Injectable({ providedIn: 'root' })
 export class ManageAdminUsersUseCase {

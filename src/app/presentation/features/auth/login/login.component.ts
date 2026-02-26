@@ -3,9 +3,9 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { CheckSessionUseCase } from '../../../../application/use-cases/auth/check-session.use-case';
-import { LoginUseCase } from '../../../../application/use-cases/auth/login.use-case';
-import { ErrorMessageService } from '../../../shared/services/error-message.service';
+import { CheckSessionUseCase } from '@application/use-cases/auth/check-session.use-case';
+import { LoginUseCase } from '@application/use-cases/auth/login.use-case';
+import { ErrorMessageService } from '@presentation/shared/services/error-message.service';
 
 @Component({
   selector: 'app-login',

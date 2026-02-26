@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { CheckSessionUseCase } from '../../application/use-cases/auth/check-session.use-case';
-import { LogoutUseCase } from '../../application/use-cases/auth/logout.use-case';
-import { SessionUiService } from '../shared/services/session-ui.service';
+import { CheckSessionUseCase } from '@application/use-cases/auth/check-session.use-case';
+import { LogoutUseCase } from '@application/use-cases/auth/logout.use-case';
+import { SessionUiService } from '@presentation/shared/services/session-ui.service';
 
 export const authGuard: CanActivateFn = () => {
   const checkSessionUseCase = inject(CheckSessionUseCase);

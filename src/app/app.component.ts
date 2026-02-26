@@ -10,7 +10,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SessionExpiredModalComponent } from './presentation/shared/components/session-expired-modal/session-expired-modal.component';
 import { GlobalLoaderComponent } from './presentation/shared/components/global-loader/global-loader.component';
-import { GlobalLoaderService } from './presentation/shared/services/global-loader.service';
+import { GlobalLoaderService } from '@presentation/shared/services/global-loader.service';
 
 @Component({
   selector: 'app-root',

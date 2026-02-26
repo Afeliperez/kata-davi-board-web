@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { UserSummary } from '../../../../../../../domain/ports/home-data-repository.port';
+import { UserSummary } from '@domain/ports/home-data-repository.port';
 
 @Component({
   selector: 'app-admin-section',

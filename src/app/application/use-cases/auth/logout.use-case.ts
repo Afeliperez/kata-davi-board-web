@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { TokenStorageService } from '../../../infrastructure/services/auth/token-storage.service';
-import { AuthSessionService } from '../../../infrastructure/services/auth/auth-session.service';
+import { TokenStorageService } from '@infrastructure/services/auth/token-storage.service';
+import { AuthSessionService } from '@infrastructure/services/auth/auth-session.service';
 
 @Injectable({ providedIn: 'root' })
 export class LogoutUseCase {

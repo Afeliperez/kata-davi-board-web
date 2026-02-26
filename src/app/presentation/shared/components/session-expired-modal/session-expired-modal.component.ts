@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { SessionUiService } from '../../services/session-ui.service';
+import { SessionUiService } from '@presentation/shared/services/session-ui.service';
 
 @Component({
   selector: 'app-session-expired-modal',

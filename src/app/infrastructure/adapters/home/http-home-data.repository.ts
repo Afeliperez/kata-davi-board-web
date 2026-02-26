@@ -14,7 +14,7 @@ import {
   UpdateUserCommand,
   UserSummary,
   UsersPayload,
-} from '../../../domain/ports/home-data-repository.port';
+} from '@domain/ports/home-data-repository.port';
 
 @Injectable({ providedIn: 'root' })
 export class HttpHomeDataRepository implements HomeDataRepositoryPort {

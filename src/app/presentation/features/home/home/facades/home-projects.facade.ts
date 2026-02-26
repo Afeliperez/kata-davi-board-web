@@ -1,11 +1,11 @@
 import { Injectable, inject } from '@angular/core';
-import { ManageSmProjectsUseCase } from '../../../../../application/use-cases/home/manage-sm-projects.use-case';
+import { ManageSmProjectsUseCase } from '@application/use-cases/home/manage-sm-projects.use-case';
 import {
   CreateProjectCommand,
   HomePayload,
   ProjectBoardSummary,
   UpdateProjectCommand,
-} from '../../../../../domain/ports/home-data-repository.port';
+} from '@domain/ports/home-data-repository.port';
 
 @Injectable({ providedIn: 'root' })
 export class HomeProjectsFacade {
