@@ -197,6 +197,7 @@ export class HomeBodyComponent implements OnChanges {
   createUser(): void {
     if (this.createForm.invalid) {
       this.createForm.markAllAsTouched();
+      this.adminError = this.getCreateUserValidationError();
       return;
     }
 
@@ -217,6 +218,44 @@ export class HomeBodyComponent implements OnChanges {
         this.adminError = 'No fue posible crear el usuario.';
       },
     });
+  }
+
+  private getCreateUserValidationError(): string {
+    const { cc, email, userName, role, password } = this.createForm.controls;
+
+    if (cc.hasError('required')) {
+      return 'La cédula es obligatoria.';
+    }
+
+    if (cc.hasError('pattern')) {
+      return 'La cédula debe contener solo números.';
+    }
+
+    if (email.hasError('required')) {
+      return 'El correo es obligatorio.';
+    }
+
+    if (email.hasError('email')) {
+      return 'El correo no tiene un formato válido.';
+    }
+
+    if (userName.hasError('required')) {
+      return 'El nombre es obligatorio.';
+    }
+
+    if (role.hasError('required')) {
+      return 'El rol es obligatorio.';
+    }
+
+    if (password.hasError('required')) {
+      return 'La contraseña es obligatoria.';
+    }
+
+    if (password.hasError('minlength')) {
+      return 'La contraseña debe tener al menos 8 caracteres.';
+    }
+
+    return 'Completa correctamente todos los campos para crear el usuario.';
   }
 
   startEdit(user: UserSummary): void {
