@@ -8,7 +8,7 @@
   </button>
 
   <ng-container *ngIf="!sectionCollapsed">
-    <form [formGroup]="createForm" (ngSubmit)="createUser.emit()" class="admin-form">
+    <form [formGroup]="createForm" (ngSubmit)="createUser.emit()" novalidate class="admin-form">
       <input type="text" formControlName="cc" placeholder="Cédula" />
       <input type="email" formControlName="email" placeholder="Correo" />
       <input type="text" formControlName="userName" placeholder="Nombre" />
@@ -48,7 +48,7 @@
 
     <p *ngIf="!isLoadingUsers && filteredUsers.length === 0">No hay usuarios para mostrar.</p>
 
-    <form *ngIf="editingCc" [formGroup]="editForm" (ngSubmit)="saveEdit.emit()" class="admin-form">
+    <form *ngIf="editingCc" [formGroup]="editForm" (ngSubmit)="saveEdit.emit()" novalidate class="admin-form">
       <h3>Editar usuario {{ editingCc }}</h3>
       <input type="email" formControlName="email" placeholder="Correo" />
       <input type="text" formControlName="userName" placeholder="Nombre" />
