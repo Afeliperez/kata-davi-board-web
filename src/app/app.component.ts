@@ -17,6 +17,7 @@ import { GlobalLoaderService } from '@presentation/shared/services/global-loader
   standalone: true,
   imports: [RouterOutlet, SessionExpiredModalComponent, GlobalLoaderComponent],
   templateUrl: './app.component.html',
+  styleUrl: './app.component.scss',
 })
 export class AppComponent {
   private readonly router = inject(Router);
