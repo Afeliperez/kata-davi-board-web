@@ -3,32 +3,43 @@ import { Component, Input, OnChanges, SimpleChanges, inject } from '@angular/cor
 import { FormsModule } from '@angular/forms';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ManageAdminUsersUseCase } from '../../../../../application/use-cases/home/manage-admin-users.use-case';
-import { ManageSmProjectsUseCase } from '../../../../../application/use-cases/home/manage-sm-projects.use-case';
 import {
   HomePayload,
   HuItem,
   ProjectBoardSummary,
   UserSummary,
-} from '../../../../../domain/ports/home-data-repository.port';
+} from '../../../../../../domain/ports/home-data-repository.port';
+import { ProjectRolePolicyService } from '../../../../../../domain/policies/project-role-policy.service';
+import { HomeAdminFacade } from '../sections/admin-section/home-admin.facade';
+import { HomeProjectsFacade } from '../../facades/home-projects.facade';
+import { AdminSectionComponent } from '../sections/admin-section/admin-section.component';
+import { ScrumManagementSectionComponent } from '../sections/scrum-management/scrum-management-section.component';
+import { ProjectCatalogSectionComponent } from '../sections/project-catalog-section/project-catalog-section.component';
 
 @Component({
   selector: 'app-home-body',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AdminSectionComponent,
+    ScrumManagementSectionComponent,
+    ProjectCatalogSectionComponent,
+  ],
   templateUrl: './home-body.component.html',
   styleUrl: './home-body.component.scss',
 })
 export class HomeBodyComponent implements OnChanges {
   private readonly formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
-  private readonly manageAdminUsersUseCase = inject(ManageAdminUsersUseCase);
-  private readonly manageSmProjectsUseCase = inject(ManageSmProjectsUseCase);
+  private readonly homeAdminFacade = inject(HomeAdminFacade);
+  private readonly homeProjectsFacade = inject(HomeProjectsFacade);
+  private readonly projectRolePolicy = inject(ProjectRolePolicyService);
 
   @Input() role = '';
   @Input() isAdmin = false;
   @Input() isLoading = false;
-  @Input() endpointUsed = '';
   @Input() payload: HomePayload | { message: string } | null = null;
   @Input() searchTerm = '';
 
@@ -50,6 +61,7 @@ export class HomeBodyComponent implements OnChanges {
     'validacion_po',
     'finalizado',
   ];
+  readonly allowedRoles = ['ADMIN', 'SM', 'PO', 'DEV', 'QA'];
 
   readonly createForm = this.formBuilder.nonNullable.group({
     cc: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
@@ -93,15 +105,15 @@ export class HomeBodyComponent implements OnChanges {
   }
 
   get isScrum(): boolean {
-    return this.role.toUpperCase() === 'SM' || this.role.toUpperCase() === 'SCRUM';
+    return this.projectRolePolicy.isScrum(this.role);
   }
 
   get isPo(): boolean {
-    return this.role.toUpperCase() === 'PO';
+    return this.projectRolePolicy.isPo(this.role);
   }
 
   get canEditProjectHu(): boolean {
-    return this.isScrum || this.isPo;
+    return this.projectRolePolicy.canEditProjectHuSection(this.role);
   }
 
   get shouldShowProjects(): boolean {
@@ -109,16 +121,7 @@ export class HomeBodyComponent implements OnChanges {
   }
 
   get filteredProjects(): ProjectBoardSummary[] {
-    const normalizedTerm = this.projectSearchTerm.trim().toLowerCase();
-
-    if (!normalizedTerm) {
-      return this.projects;
-    }
-
-    return this.projects.filter((project) => {
-      const searchableContent = JSON.stringify(project).toLowerCase();
-      return searchableContent.includes(normalizedTerm);
-    });
+    return this.homeProjectsFacade.filterProjects(this.projects, this.projectSearchTerm);
   }
 
   get huItemsControls(): FormArray {
@@ -179,7 +182,7 @@ export class HomeBodyComponent implements OnChanges {
     this.adminError = '';
     this.isLoadingUsers = true;
 
-    this.manageAdminUsersUseCase.listUsers().subscribe({
+    this.homeAdminFacade.listUsers().subscribe({
       next: (users) => {
         this.users = users;
         this.isLoadingUsers = false;
@@ -199,7 +202,7 @@ export class HomeBodyComponent implements OnChanges {
 
     this.adminError = '';
 
-    this.manageAdminUsersUseCase.createUser(this.createForm.getRawValue()).subscribe({
+    this.homeAdminFacade.createUser(this.createForm.getRawValue()).subscribe({
       next: () => {
         this.createForm.reset({
           cc: '',
@@ -242,7 +245,7 @@ export class HomeBodyComponent implements OnChanges {
 
     this.adminError = '';
 
-    this.manageAdminUsersUseCase.updateUser(this.editingCc, this.editForm.getRawValue()).subscribe({
+    this.homeAdminFacade.updateUser(this.editingCc, this.editForm.getRawValue()).subscribe({
       next: () => {
         this.cancelEdit();
         this.loadUsers();
@@ -256,7 +259,7 @@ export class HomeBodyComponent implements OnChanges {
   deleteUser(cc: string): void {
     this.adminError = '';
 
-    this.manageAdminUsersUseCase.deleteUser(cc).subscribe({
+    this.homeAdminFacade.deleteUser(cc).subscribe({
       next: () => {
         this.loadUsers();
       },
@@ -279,7 +282,7 @@ export class HomeBodyComponent implements OnChanges {
     this.scrumError = '';
     this.isLoadingProjects = true;
 
-    this.manageSmProjectsUseCase.listProjects().subscribe({
+    this.homeProjectsFacade.listProjects().subscribe({
       next: (projects) => {
         this.projects = projects;
         this.isLoadingProjects = false;
@@ -329,7 +332,7 @@ export class HomeBodyComponent implements OnChanges {
 
     this.scrumError = '';
 
-    this.manageSmProjectsUseCase
+    this.homeProjectsFacade
       .createProject({
         pro: this.createProjectForm.controls.pro.value,
         projectName: this.createProjectForm.controls.projectName.value,
@@ -431,7 +434,7 @@ export class HomeBodyComponent implements OnChanges {
 
     this.scrumError = '';
 
-    this.manageSmProjectsUseCase
+    this.homeProjectsFacade
       .updateProject(this.editingProjectPro, {
         projectName,
         hu,
@@ -455,7 +458,7 @@ export class HomeBodyComponent implements OnChanges {
 
     this.scrumError = '';
 
-    this.manageSmProjectsUseCase.deleteProject(pro).subscribe({
+    this.homeProjectsFacade.deleteProject(pro).subscribe({
       next: () => {
         this.loadProjectsByRole();
       },
@@ -520,18 +523,7 @@ export class HomeBodyComponent implements OnChanges {
   private hydrateProjectsFromPayload(): void {
     this.scrumError = '';
 
-    if (!this.payload || !('data' in this.payload)) {
-      this.projects = [];
-      this.isLoadingProjects = this.isLoading;
-      return;
-    }
-
-    const rawProjects = this.payload.data;
-    const projects = Array.isArray(rawProjects) ? rawProjects : [rawProjects];
-
-    this.projects = projects.filter((project): project is ProjectBoardSummary => {
-      return !!project && typeof project === 'object' && 'pro' in project && 'hu' in project;
-    });
+    this.projects = this.homeProjectsFacade.projectsFromPayload(this.payload);
 
     this.isLoadingProjects = this.isLoading;
   }

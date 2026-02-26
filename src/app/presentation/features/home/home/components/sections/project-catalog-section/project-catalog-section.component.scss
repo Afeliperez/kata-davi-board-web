@@ -1,0 +1,159 @@
+.project-catalog {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.section-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #d0d5dd;
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+  color: #101828;
+  cursor: pointer;
+}
+
+.section-toggle-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  color: #475467;
+}
+
+.section-arrow {
+  font-size: 1.05rem;
+  color: #1d2939;
+}
+
+.project-search {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0.5rem 0 0.9rem;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.project-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.9rem;
+  background: #fcfcfd;
+}
+
+.project-card__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.project-card__header h3 {
+  margin: 0 0 0.4rem;
+}
+
+.project-card__header small {
+  color: #475467;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.project-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.6rem;
+  margin: 0.75rem 0;
+}
+
+.project-edit-form {
+  margin-top: 0.8rem;
+  border-top: 1px solid #eaecf0;
+  padding-top: 0.8rem;
+}
+
+.hu-editor,
+.cedula-editor {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.7rem;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.cedula-editor h4,
+.hu-editor h4 {
+  margin: 0;
+}
+
+.cedula-editor--edit {
+  border-style: dashed;
+  background: #f9fafb;
+}
+
+.cedula-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.hu-item {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 0.9fr auto;
+  gap: 0.5rem;
+  padding: 0.55rem;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.btn-secondary {
+  border: 1px solid #d0d5dd;
+  background: #ffffff;
+  color: #344054;
+  border-radius: 6px;
+}
+
+.status-readonly {
+  display: flex;
+  align-items: center;
+  padding: 0.55rem;
+  border: 1px solid #eaecf0;
+  border-radius: 6px;
+  background: #f9fafb;
+  color: #344054;
+}
+
+@media (max-width: 768px) {
+  .project-catalog {
+    padding: 0.75rem;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+  }
+
+  .hu-item,
+  .cedula-item {
+    grid-template-columns: 1fr;
+  }
+}

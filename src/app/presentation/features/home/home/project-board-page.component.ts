@@ -7,9 +7,10 @@ import { LogoutUseCase } from '../../../../application/use-cases/auth/logout.use
 import { ManageSmProjectsUseCase } from '../../../../application/use-cases/home/manage-sm-projects.use-case';
 import { AuthUser } from '../../../../domain/ports/auth-repository.port';
 import { HuItem, ProjectBoardSummary } from '../../../../domain/ports/home-data-repository.port';
+import { ProjectRolePolicyService } from '../../../../domain/policies/project-role-policy.service';
 import { AuthSessionService } from '../../../../infrastructure/services/auth/auth-session.service';
-import { ScrumProjectBoardComponent } from './components/scrum-project-board.component';
-import { HomeFooterComponent } from './components/home-footer.component';
+import { ScrumProjectBoardComponent } from './components/scrum-project-board/scrum-project-board.component';
+import { HomeFooterComponent } from './components/home-footer/home-footer.component';
 
 @Component({
   selector: 'app-project-board-page',
@@ -25,8 +26,8 @@ export class ProjectBoardPageComponent implements OnInit {
   private readonly getHomeDataUseCase = inject(GetHomeDataUseCase);
   private readonly logoutUseCase = inject(LogoutUseCase);
   private readonly manageSmProjectsUseCase = inject(ManageSmProjectsUseCase);
+  private readonly projectRolePolicy = inject(ProjectRolePolicyService);
 
-  endpointUsed = '';
   isLoading = false;
   error = '';
   currentUserName = '';
@@ -126,7 +127,7 @@ export class ProjectBoardPageComponent implements OnInit {
 
       this.currentUserName = user.userName;
       this.currentUserRole = user.role.toUpperCase();
-      this.isScrum = this.isScrumRole(user.role);
+      this.isScrum = this.projectRolePolicy.isScrum(user.role);
 
       if (this.isScrum) {
         this.loadSmProject();
@@ -158,14 +159,12 @@ export class ProjectBoardPageComponent implements OnInit {
   private loadAccessProject(user: AuthUser): void {
     this.isLoading = true;
     this.error = '';
-    this.endpointUsed = '';
 
     this.getHomeDataUseCase
       .execute(user)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (result) => {
-          this.endpointUsed = result.endpoint;
           const rawData = result.data.data;
           const projects = Array.isArray(rawData) ? rawData : [rawData];
 
@@ -189,13 +188,8 @@ export class ProjectBoardPageComponent implements OnInit {
     }
   }
 
-  private isScrumRole(role: string): boolean {
-    const normalizedRole = role.toUpperCase();
-    return normalizedRole === 'SM' || normalizedRole === 'SCRUM';
-  }
-
   get canEditBoard(): boolean {
-    return ['SM', 'SCRUM', 'PO', 'DEV', 'QA'].includes(this.currentUserRole);
+    return this.projectRolePolicy.canEditBoard(this.currentUserRole);
   }
 
   private getUpdatedHuForMove(

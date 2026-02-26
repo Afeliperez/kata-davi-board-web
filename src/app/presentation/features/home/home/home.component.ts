@@ -6,9 +6,9 @@ import { GetHomeDataUseCase } from '../../../../application/use-cases/home/get-h
 import { LogoutUseCase } from '../../../../application/use-cases/auth/logout.use-case';
 import { HomePayload } from '../../../../domain/ports/home-data-repository.port';
 import { AuthSessionService } from '../../../../infrastructure/services/auth/auth-session.service';
-import { HomeHeaderComponent } from './components/home-header.component';
-import { HomeBodyComponent } from './components/home-body.component';
-import { HomeFooterComponent } from './components/home-footer.component';
+import { HomeHeaderComponent } from './components/home-header/home-header.component';
+import { HomeBodyComponent } from './components/home-body/home-body.component';
+import { HomeFooterComponent } from './components/home-footer/home-footer.component';
 
 @Component({
   selector: 'app-home',

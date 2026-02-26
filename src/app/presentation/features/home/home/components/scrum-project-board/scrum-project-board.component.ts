@@ -6,8 +6,9 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { ManageSmProjectsUseCase } from '../../../../../application/use-cases/home/manage-sm-projects.use-case';
-import { HuItem, ProjectBoardSummary } from '../../../../../domain/ports/home-data-repository.port';
+import { ManageSmProjectsUseCase } from '../../../../../../application/use-cases/home/manage-sm-projects.use-case';
+import { HuItem, ProjectBoardSummary } from '../../../../../../domain/ports/home-data-repository.port';
+import { ProjectRolePolicyService } from '../../../../../../domain/policies/project-role-policy.service';
 
 @Component({
   selector: 'app-scrum-project-board',
@@ -18,6 +19,7 @@ import { HuItem, ProjectBoardSummary } from '../../../../../domain/ports/home-da
 })
 export class ScrumProjectBoardComponent implements OnChanges {
   private readonly manageSmProjectsUseCase = inject(ManageSmProjectsUseCase);
+  private readonly projectRolePolicy = inject(ProjectRolePolicyService);
 
   @Input() project: ProjectBoardSummary | null = null;
   @Input() canEdit = true;
@@ -45,66 +47,20 @@ export class ScrumProjectBoardComponent implements OnChanges {
   }
 
   canDragFromStatus(status: string): boolean {
-    if (!this.canEdit) {
-      return false;
-    }
-
-    const normalizedRole = this.normalizeRole(this.userRole);
-
-    if (normalizedRole === 'SM' || normalizedRole === 'SCRUM') {
-      return true;
-    }
-
-    const fromStatus = this.normalizeStatus(status);
-
-    if (normalizedRole === 'PO') {
-      return fromStatus === 'validacion_po';
-    }
-
-    if (normalizedRole === 'DEV') {
-      return ['por_hacer', 'en_curso', 'test'].includes(fromStatus);
-    }
-
-    if (normalizedRole === 'QA') {
-      return ['en_curso', 'test', 'validacion_po'].includes(fromStatus);
-    }
-
-    return false;
+    return this.projectRolePolicy.canDragFromStatus(this.userRole, status, this.canEdit);
   }
 
   canMoveBetweenStatuses(fromStatus: string, toStatus: string): boolean {
-    if (!this.canEdit) {
-      return false;
-    }
-
-    const normalizedRole = this.normalizeRole(this.userRole);
-
-    if (normalizedRole === 'SM' || normalizedRole === 'SCRUM') {
-      return true;
-    }
-
-    const normalizedFrom = this.normalizeStatus(fromStatus);
-    const normalizedTo = this.normalizeStatus(toStatus);
-
-    if (normalizedRole === 'PO') {
-      return normalizedFrom === 'validacion_po' && normalizedTo === 'finalizado';
-    }
-
-    if (normalizedRole === 'DEV') {
-      return ['por_hacer', 'en_curso', 'test'].includes(normalizedFrom)
-        && ['por_hacer', 'en_curso', 'test'].includes(normalizedTo);
-    }
-
-    if (normalizedRole === 'QA') {
-      return ['en_curso', 'test', 'validacion_po'].includes(normalizedFrom)
-        && ['en_curso', 'test', 'validacion_po'].includes(normalizedTo);
-    }
-
-    return false;
+    return this.projectRolePolicy.canMoveBetweenStatuses(
+      this.userRole,
+      fromStatus,
+      toStatus,
+      this.canEdit,
+    );
   }
 
   getCardStatusClass(status: string): string {
-    const normalizedStatus = this.normalizeStatus(status);
+    const normalizedStatus = this.projectRolePolicy.normalizeStatus(status);
 
     switch (normalizedStatus) {
       case 'backlog':
@@ -166,7 +122,7 @@ export class ScrumProjectBoardComponent implements OnChanges {
     const fromStatus = item.status;
 
     if (!this.canMoveBetweenStatuses(fromStatus, toStatus)) {
-      this.permissionMessage = `No puedes mover una HU de ${this.getStatusLabel(fromStatus)} a ${this.getStatusLabel(toStatus)} con el rol ${this.normalizeRole(this.userRole)}.`;
+      this.permissionMessage = `No puedes mover una HU de ${this.getStatusLabel(fromStatus)} a ${this.getStatusLabel(toStatus)} con el rol ${this.projectRolePolicy.normalizeRole(this.userRole)}.`;
       return;
     }
 
@@ -209,7 +165,7 @@ export class ScrumProjectBoardComponent implements OnChanges {
   }
 
   private getStatusLabel(status: string): string {
-    switch (this.normalizeStatus(status)) {
+    switch (this.projectRolePolicy.normalizeStatus(status)) {
       case 'backlog':
         return 'Backlog';
       case 'por_hacer':
@@ -231,18 +187,5 @@ export class ScrumProjectBoardComponent implements OnChanges {
       default:
         return status;
     }
-  }
-
-  private normalizeStatus(value: string): string {
-    return value
-      .trim()
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[\s-]+/g, '_');
-  }
-
-  private normalizeRole(value: string): string {
-    return value.trim().toUpperCase();
   }
 }

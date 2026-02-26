@@ -1,0 +1,149 @@
+.scrum-management {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.section-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #d0d5dd;
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+  color: #101828;
+  cursor: pointer;
+}
+
+.section-toggle-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  color: #475467;
+}
+
+.section-arrow {
+  font-size: 1.05rem;
+  color: #1d2939;
+}
+
+.project-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.6rem;
+  margin: 0.75rem 0;
+}
+
+.create-project-form {
+  border: 1px solid #eaecf0;
+  border-radius: 10px;
+  padding: 0.85rem;
+  background: #f9fafb;
+}
+
+.project-form__header {
+  grid-column: 1 / -1;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #eaecf0;
+}
+
+.project-form__header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.project-form__header p {
+  margin: 0.3rem 0 0;
+  color: #475467;
+  font-size: 0.92rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-field span {
+  font-weight: 600;
+  color: #344054;
+  font-size: 0.86rem;
+}
+
+.project-form__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.project-form__actions button {
+  min-width: 160px;
+}
+
+.project-form__actions button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.hu-editor,
+.cedula-editor {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.7rem;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.hu-editor h4,
+.cedula-editor h4 {
+  margin: 0;
+}
+
+.hu-item {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 0.9fr auto;
+  gap: 0.5rem;
+  padding: 0.55rem;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.cedula-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.error {
+  color: #b42318;
+}
+
+@media (max-width: 768px) {
+  .scrum-management {
+    padding: 0.75rem;
+  }
+
+  .hu-item,
+  .cedula-item {
+    grid-template-columns: 1fr;
+  }
+
+  .project-form__actions {
+    justify-content: stretch;
+  }
+
+  .project-form__actions button {
+    width: 100%;
+  }
+}

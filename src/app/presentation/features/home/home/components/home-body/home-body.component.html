@@ -1,0 +1,65 @@
+<main class="body">
+  <app-admin-section
+    *ngIf="isAdmin"
+    [sectionCollapsed]="isSectionCollapsed('admin')"
+    [isLoadingUsers]="isLoadingUsers"
+    [adminError]="adminError"
+    [filteredUsers]="filteredUsers"
+    [editingCc]="editingCc"
+    [roleOptions]="allowedRoles"
+    [createForm]="createForm"
+    [editForm]="editForm"
+    (toggleSection)="toggleSection('admin')"
+    (createUser)="createUser()"
+    (startEdit)="startEdit($event)"
+    (deleteUser)="deleteUser($event)"
+    (saveEdit)="saveEdit()"
+    (cancelEdit)="cancelEdit()"
+  ></app-admin-section>
+
+  <section *ngIf="isScrum" class="scrum-dashboard">
+    <app-scrum-management-section
+      [sectionCollapsed]="isSectionCollapsed('scrum-management')"
+      [createProjectForm]="createProjectForm"
+      [createHuItemsControls]="createHuItemsControls"
+      [createAccessControls]="createAccessControls"
+      [projectStatuses]="projectStatuses"
+      [isLoadingProjects]="isLoadingProjects"
+      [scrumError]="scrumError"
+      (toggleSection)="toggleSection('scrum-management')"
+      (createProject)="createProject()"
+      (removeCreateHuItem)="removeCreateHuItem($event)"
+      (addCreateHuItem)="addCreateHuItem()"
+      (removeCreateAccess)="removeCreateAccess($event)"
+      (addCreateAccess)="addCreateAccess()"
+    ></app-scrum-management-section>
+  </section>
+
+  <app-project-catalog-section
+    *ngIf="shouldShowProjects"
+    [sectionCollapsed]="isSectionCollapsed('project-catalog')"
+    [projectSearchTerm]="projectSearchTerm"
+    [isLoadingProjects]="isLoadingProjects"
+    [isLoading]="isLoading"
+    [filteredProjects]="filteredProjects"
+    [canEditProjectHu]="canEditProjectHu"
+    [isScrum]="isScrum"
+    [isPo]="isPo"
+    [editingProjectPro]="editingProjectPro"
+    [editProjectForm]="editProjectForm"
+    [editAccessControls]="editAccessControls"
+    [huItemsControls]="huItemsControls"
+    [projectStatuses]="projectStatuses"
+    (toggleSection)="toggleSection('project-catalog')"
+    (projectSearchTermChange)="projectSearchTerm = $event"
+    (viewProjectBoard)="viewProjectBoard($event)"
+    (startEditProject)="startEditProject($event)"
+    (deleteProject)="deleteProject($event)"
+    (saveProject)="saveProject()"
+    (cancelEditProject)="cancelEditProject()"
+    (removeEditAccess)="removeEditAccess($event)"
+    (addEditAccess)="addEditAccess()"
+    (removeHuItem)="removeHuItem($event)"
+    (addHuItem)="addHuItem()"
+  ></app-project-catalog-section>
+</main>

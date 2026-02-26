@@ -1,0 +1,16 @@
+.body {
+  padding: 1.5rem 2rem;
+}
+
+.scrum-dashboard {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+@media (max-width: 768px) {
+  .body {
+    padding: 1rem;
+  }
+}
