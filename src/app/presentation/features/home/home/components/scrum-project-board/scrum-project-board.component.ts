@@ -1,5 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  inject,
+} from '@angular/core';
 import {
   CdkDragDrop,
   DragDropModule,
@@ -10,12 +19,25 @@ import { ManageSmProjectsUseCase } from '../../../../../../application/use-cases
 import { HuItem, ProjectBoardSummary } from '../../../../../../domain/ports/home-data-repository.port';
 import { ProjectRolePolicyService } from '../../../../../../domain/policies/project-role-policy.service';
 
+interface BoardCardVm extends HuItem {
+  statusClass: string;
+  statusLabel: string;
+  statusIcon: string;
+}
+
+interface BoardColumnVm {
+  title: string;
+  statusValue: string;
+  cards: BoardCardVm[];
+}
+
 @Component({
   selector: 'app-scrum-project-board',
   standalone: true,
   imports: [CommonModule, DragDropModule],
   templateUrl: './scrum-project-board.component.html',
   styleUrl: './scrum-project-board.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScrumProjectBoardComponent implements OnChanges {
   private readonly manageSmProjectsUseCase = inject(ManageSmProjectsUseCase);
@@ -33,9 +55,17 @@ export class ScrumProjectBoardComponent implements OnChanges {
     sameColumn: boolean;
   }>();
 
-  columns: Array<{ title: string; statusValue: string; cards: HuItem[] }> = [];
+  columns: BoardColumnVm[] = [];
   permissionMessage = '';
   private readonly collapsedByStatus = new Map<string, boolean>();
+
+  trackByColumn(_index: number, column: BoardColumnVm): string {
+    return column.statusValue;
+  }
+
+  trackByCard(_index: number, item: BoardCardVm): string {
+    return `${item.hu}-${item.status}-${item.descripcion}`;
+  }
 
   isColumnCollapsed(statusValue: string): boolean {
     return this.collapsedByStatus.get(statusValue) ?? false;
@@ -59,7 +89,7 @@ export class ScrumProjectBoardComponent implements OnChanges {
     );
   }
 
-  getCardStatusClass(status: string): string {
+  private getCardStatusClass(status: string): string {
     const normalizedStatus = this.projectRolePolicy.normalizeStatus(status);
 
     switch (normalizedStatus) {
@@ -86,6 +116,73 @@ export class ScrumProjectBoardComponent implements OnChanges {
     }
   }
 
+  private getCardStatusLabel(status: string): string {
+    switch (this.projectRolePolicy.normalizeStatus(status)) {
+      case 'backlog':
+        return 'Backlog';
+      case 'por_hacer':
+      case 'todo':
+        return 'Por hacer';
+      case 'en_curso':
+      case 'in_progress':
+        return 'En curso';
+      case 'test':
+      case 'testing':
+        return 'Test';
+      case 'validacion_po':
+      case 'po':
+        return 'Validación PO';
+      case 'finalizado':
+      case 'done':
+      case 'finished':
+        return 'Finalizado';
+      default:
+        return status;
+    }
+  }
+
+  private getCardStatusIcon(status: string): string {
+    switch (this.projectRolePolicy.normalizeStatus(status)) {
+      case 'backlog':
+        return '🗂️';
+      case 'por_hacer':
+      case 'todo':
+        return '📌';
+      case 'en_curso':
+      case 'in_progress':
+        return '⚙️';
+      case 'test':
+      case 'testing':
+        return '🧪';
+      case 'validacion_po':
+      case 'po':
+        return '✅';
+      case 'finalizado':
+      case 'done':
+      case 'finished':
+        return '🏁';
+      default:
+        return '•';
+    }
+  }
+
+  private enrichCard(card: HuItem): BoardCardVm {
+    return {
+      ...card,
+      statusClass: this.getCardStatusClass(card.status),
+      statusLabel: this.getCardStatusLabel(card.status),
+      statusIcon: this.getCardStatusIcon(card.status),
+    };
+  }
+
+  private toHuItem(card: BoardCardVm): HuItem {
+    return {
+      hu: card.hu,
+      descripcion: card.descripcion,
+      status: card.status,
+    };
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (!changes['project']) {
       return;
@@ -95,7 +192,7 @@ export class ScrumProjectBoardComponent implements OnChanges {
     this.columns = sourceColumns.map((column) => ({
       title: column.title,
       statusValue: column.statusValue,
-      cards: column.cards.map((card) => ({ ...card })),
+      cards: column.cards.map((card) => this.enrichCard(card)),
     }));
 
     this.columns.forEach((column) => {
@@ -105,7 +202,7 @@ export class ScrumProjectBoardComponent implements OnChanges {
     });
   }
 
-  onDrop(event: CdkDragDrop<HuItem[]>, toStatus: string): void {
+  onDrop(event: CdkDragDrop<BoardCardVm[]>, toStatus: string): void {
     if (!this.canEdit) {
       this.permissionMessage = 'Tu rol no tiene permisos para mover tarjetas.';
       return;
@@ -113,7 +210,7 @@ export class ScrumProjectBoardComponent implements OnChanges {
 
     this.permissionMessage = '';
 
-    const item = event.item.data as HuItem | undefined;
+    const item = event.item.data as BoardCardVm | undefined;
 
     if (!item) {
       return;
@@ -142,10 +239,10 @@ export class ScrumProjectBoardComponent implements OnChanges {
         event.currentIndex,
       );
 
-      event.container.data[event.currentIndex] = {
+      event.container.data[event.currentIndex] = this.enrichCard({
         ...event.container.data[event.currentIndex],
         status: toStatus,
-      };
+      });
     }
 
     const movedItem = event.container.data[event.currentIndex];
@@ -155,7 +252,7 @@ export class ScrumProjectBoardComponent implements OnChanges {
     }
 
     this.huMoved.emit({
-      item: movedItem,
+      item: this.toHuItem(movedItem),
       fromStatus,
       toStatus,
       previousIndex: event.previousIndex,

@@ -9,7 +9,7 @@
     <div class="board" cdkDropListGroup>
       <section
         class="column"
-        *ngFor="let column of columns"
+        *ngFor="let column of columns; trackBy: trackByColumn"
         cdkDropList
         [cdkDropListData]="column.cards"
         [cdkDropListDisabled]="isColumnCollapsed(column.statusValue)"
@@ -31,14 +31,20 @@
         <ng-container *ngIf="!isColumnCollapsed(column.statusValue)">
           <article
             class="card"
-            *ngFor="let item of column.cards"
+            *ngFor="let item of column.cards; trackBy: trackByCard"
             cdkDrag
             [cdkDragData]="item"
             [cdkDragDisabled]="!canDragFromStatus(item.status)"
-            [ngClass]="getCardStatusClass(item.status)"
+            [ngClass]="item.statusClass"
           >
-            <strong>{{ item.hu }}</strong>
-            <p>{{ item.descripcion }}</p>
+            <div class="card__header">
+              <strong>{{ item.hu }}</strong>
+              <span class="status-badge" [ngClass]="item.statusClass" [attr.aria-label]="'Estado: ' + item.statusLabel">
+                <span class="status-icon" aria-hidden="true">{{ item.statusIcon }}</span>
+                <span>{{ item.statusLabel }}</span>
+              </span>
+            </div>
+            <p class="card__description">{{ item.descripcion }}</p>
           </article>
         </ng-container>
       </section>

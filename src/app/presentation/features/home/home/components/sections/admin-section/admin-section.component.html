@@ -16,7 +16,7 @@
         <option *ngFor="let role of roleOptions" [value]="role">{{ role }}</option>
       </select>
       <input type="password" formControlName="password" placeholder="Contraseña" />
-      <button type="submit">Crear usuario</button>
+      <button type="submit" class="btn-primary">Crear usuario</button>
     </form>
 
     <p *ngIf="isLoadingUsers">Cargando usuarios...</p>
@@ -39,8 +39,8 @@
           <td>{{ user.email }}</td>
           <td>{{ user.role }}</td>
           <td class="actions">
-            <button type="button" (click)="startEdit.emit(user)">Editar</button>
-            <button type="button" (click)="deleteUser.emit(user.cc)">Eliminar</button>
+            <button type="button" class="btn-secondary" (click)="startEdit.emit(user)">Editar</button>
+            <button type="button" class="btn-danger" (click)="deleteUser.emit(user.cc)">Eliminar</button>
           </td>
         </tr>
       </tbody>
@@ -56,8 +56,8 @@
         <option *ngFor="let role of roleOptions" [value]="role">{{ role }}</option>
       </select>
       <div class="actions">
-        <button type="submit">Guardar cambios</button>
-        <button type="button" (click)="cancelEdit.emit()">Cancelar</button>
+        <button type="submit" class="btn-primary">Guardar cambios</button>
+        <button type="button" class="btn-secondary" (click)="cancelEdit.emit()">Cancelar</button>
       </div>
     </form>
   </ng-container>

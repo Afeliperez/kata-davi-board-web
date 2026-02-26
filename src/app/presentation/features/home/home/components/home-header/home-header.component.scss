@@ -1,7 +1,9 @@
 .header {
   padding: 1.5rem 2rem;
-  background: #fff;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.9) 100%);
   border-bottom: 1px solid #e5e7eb;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 22px rgba(15, 23, 42, 0.06);
 }
 
 .header-top {
@@ -13,11 +15,14 @@
 
 .title-block h1 {
   margin: 0;
+  font-size: clamp(1.2rem, 1.7vw, 1.6rem);
+  color: #0f172a;
 }
 
 .user-name {
   margin: 0.3rem 0 0;
-  color: #344054;
+  color: #475467;
+  font-size: 0.92rem;
 }
 
 .admin-search {
@@ -25,11 +30,50 @@
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
+  border: 1px solid #eaecf0;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 0.75rem;
 }
 
-input,
-button {
-  padding: 0.55rem;
+.admin-search label {
+  font-size: 0.9rem;
+  color: #334155;
+  font-weight: 600;
+}
+
+.admin-search input,
+.header-top button {
+  padding: 0.7rem 0.78rem;
+  border-radius: 8px;
+  border: 1px solid #d0d5dd;
+}
+
+.admin-search input {
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.admin-search input::placeholder {
+  color: #98a2b3;
+}
+
+.admin-search input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.header-top button {
+  border: 0;
+  color: #ffffff;
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.header-top button:hover {
+  filter: brightness(1.05);
 }
 
 @media (max-width: 768px) {

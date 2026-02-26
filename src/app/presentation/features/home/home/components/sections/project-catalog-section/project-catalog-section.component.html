@@ -22,7 +22,7 @@
     <p *ngIf="isLoadingProjects || isLoading">Cargando proyectos...</p>
 
     <div class="projects-grid" *ngIf="!isLoadingProjects && !isLoading && filteredProjects.length > 0">
-      <article class="project-card" *ngFor="let project of filteredProjects">
+      <article class="project-card" *ngFor="let project of filteredProjects; trackBy: trackByProject">
         <div class="project-card__header">
           <h3>{{ project.projectName }}</h3>
           <small>{{ project.pro }}</small>
@@ -32,9 +32,9 @@
         <p><strong>Accesos:</strong> {{ project.accesos.join(', ') || 'Sin accesos' }}</p>
 
         <div class="actions">
-          <button type="button" (click)="viewProjectBoard.emit(project.pro)">Ir al tablero</button>
-          <button type="button" *ngIf="canEditProjectHu" (click)="startEditProject.emit(project)">Editar</button>
-          <button type="button" *ngIf="isScrum" (click)="deleteProject.emit(project.pro)">Eliminar</button>
+          <button type="button" class="btn-primary" (click)="viewProjectBoard.emit(project.pro)">Ir al tablero</button>
+          <button type="button" class="btn-secondary" *ngIf="canEditProjectHu" (click)="startEditProject.emit(project)">Editar</button>
+          <button type="button" class="btn-danger" *ngIf="isScrum" (click)="deleteProject.emit(project.pro)">Eliminar</button>
         </div>
 
         <form
@@ -48,7 +48,7 @@
           <div *ngIf="!isPo" class="cedula-editor cedula-editor--edit" formArrayName="accesos">
             <h4>Cédulas con acceso</h4>
 
-            <div class="cedula-item" *ngFor="let accessControl of editAccessControls.controls; let i = index">
+            <div class="cedula-item" *ngFor="let accessControl of editAccessControls.controls; let i = index; trackBy: trackByIndex">
               <input type="text" [formControlName]="i" placeholder="Cédula" />
               <button type="button" class="btn-secondary" (click)="removeEditAccess.emit(i)">Eliminar</button>
             </div>
@@ -59,24 +59,41 @@
           <div class="hu-editor" formArrayName="huItems">
             <h4>Historias de usuario</h4>
 
-            <div class="hu-item" *ngFor="let huControl of huItemsControls.controls; let i = index" [formGroupName]="i">
+            <div class="hu-item" *ngFor="let huControl of huItemsControls.controls; let i = index; trackBy: trackByIndex" [formGroupName]="i">
               <input type="text" formControlName="hu" placeholder="HU" />
               <input type="text" formControlName="descripcion" placeholder="Descripción" />
-              <select *ngIf="!isPo" formControlName="status">
-                <option *ngFor="let status of projectStatuses" [value]="status">{{ status }}</option>
-              </select>
-              <div *ngIf="isPo" class="status-readonly">
-                <strong>Status:</strong> {{ huControl.value.status }}
+              <div *ngIf="!isPo" class="status-field">
+                <span class="status-chip" [ngClass]="getStatusClass(huControl.value.status)">
+                  <span class="status-icon" aria-hidden="true">{{ getStatusIcon(huControl.value.status) }}</span>
+                  <span class="status-label">{{ getStatusLabel(huControl.value.status) }}</span>
+                </span>
+                <select formControlName="status">
+                  <option *ngFor="let status of projectStatuses; trackBy: trackByIndex" [value]="status">{{ getStatusOptionLabel(status) }}</option>
+                </select>
               </div>
-              <button type="button" class="btn-secondary" (click)="removeHuItem.emit(i)">Eliminar HU</button>
+              <div *ngIf="isPo" class="status-readonly" [ngClass]="getStatusClass(huControl.value.status)">
+                <span class="status-chip" [ngClass]="getStatusClass(huControl.value.status)">
+                  <span class="status-icon" aria-hidden="true">{{ getStatusIcon(huControl.value.status) }}</span>
+                  <span class="status-label">{{ getStatusLabel(huControl.value.status) }}</span>
+                </span>
+              </div>
+              <button
+                type="button"
+                class="btn-secondary btn-remove-hu"
+                aria-label="Eliminar HU"
+                title="Eliminar HU"
+                (click)="removeHuItem.emit(i)"
+              >
+                <span aria-hidden="true">🗑️</span>
+              </button>
             </div>
 
             <button type="button" class="btn-secondary" (click)="addHuItem.emit()">Agregar HU</button>
           </div>
 
           <div class="actions">
-            <button type="submit">Guardar cambios</button>
-            <button type="button" (click)="cancelEditProject.emit()">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar cambios</button>
+            <button type="button" class="btn-secondary" (click)="cancelEditProject.emit()">Cancelar</button>
           </div>
         </form>
       </article>

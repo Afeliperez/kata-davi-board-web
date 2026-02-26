@@ -1,45 +1,65 @@
-<div class="container">
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <h2>Inicio de sesión</h2>
+<div class="login-page">
+  <section class="login-shell">
+    <aside class="login-brand-panel">
+      <p class="brand-kicker">Kata Davi Board</p>
+      <h1>Gestiona tus proyectos con una sola plataforma</h1>
+      <p>
+        Accede con tus credenciales para administrar tableros, historias de usuario y flujo de estados por rol.
+      </p>
+    </aside>
 
-    <label for="cc">Cédula *</label>
-    <input
-      id="cc"
-      type="text"
-      formControlName="cc"
-      required
-      inputmode="numeric"
-      (keydown)="allowOnlyNumbers($event)"
-      (input)="sanitizeCcInput($event)"
-    />
-    <p *ngIf="form.controls.cc.touched && form.controls.cc.errors?.['required']" class="field-error">
-      La cédula es obligatoria.
-    </p>
-    <p *ngIf="form.controls.cc.touched && form.controls.cc.errors?.['pattern']" class="field-error">
-      La cédula solo debe contener números.
-    </p>
+    <form class="login-form" [formGroup]="form" (ngSubmit)="submit()">
+      <header class="login-form__header">
+        <h2>Inicio de sesión</h2>
+        <p>Ingresa tus datos para continuar.</p>
+      </header>
 
-    <label for="password">Contraseña *</label>
-    <input id="password" type="password" formControlName="password" required />
-    <p *ngIf="form.controls.password.touched && form.controls.password.errors?.['required']" class="field-error">
-      La contraseña es obligatoria.
-    </p>
-    <p *ngIf="form.controls.password.touched && form.controls.password.errors?.['minlength']" class="field-error">
-      La contraseña debe tener mínimo 8 caracteres.
-    </p>
+      <div class="field-group">
+        <label for="cc">Cédula *</label>
+        <input
+          id="cc"
+          type="text"
+          formControlName="cc"
+          required
+          inputmode="numeric"
+          placeholder="Ej: 123456789"
+          (keydown)="allowOnlyNumbers($event)"
+          (input)="sanitizeCcInput($event)"
+        />
+        <p *ngIf="form.controls.cc.touched && form.controls.cc.errors?.['required']" class="field-error">
+          La cédula es obligatoria.
+        </p>
+        <p *ngIf="form.controls.cc.touched && form.controls.cc.errors?.['pattern']" class="field-error">
+          La cédula solo debe contener números.
+        </p>
+      </div>
 
-    <p *ngIf="loginError" class="field-error">
-      {{ loginError }}
-    </p>
+      <div class="field-group">
+        <label for="password">Contraseña *</label>
+        <input id="password" type="password" formControlName="password" required placeholder="••••••••" />
+        <p *ngIf="form.controls.password.touched && form.controls.password.errors?.['required']" class="field-error">
+          La contraseña es obligatoria.
+        </p>
+        <p *ngIf="form.controls.password.touched && form.controls.password.errors?.['minlength']" class="field-error">
+          La contraseña debe tener mínimo 8 caracteres.
+        </p>
+      </div>
 
-    <button type="submit">Entrar</button>
+      <p *ngIf="loginError" class="field-error form-error">
+        {{ loginError }}
+      </p>
 
-    <p class="helper-text">¿No tienes cuenta?</p>
-    <a
-      class="contact-button"
-      href="mailto:administrador@kata.com?subject=Solicitud%20de%20acceso"
-    >
-      Contactar al administrador
-    </a>
-  </form>
+      <button class="submit-button" type="submit">Entrar</button>
+
+      <div class="support-box">
+        <p class="helper-text">¿No tienes cuenta?</p>
+        <a
+          class="contact-button"
+          href="mailto:administrador@kata.com?subject=Solicitud%20de%20acceso"
+        >
+          Contactar al administrador
+        </a>
+      </div>
+    </form>
+  </section>
 </div>
