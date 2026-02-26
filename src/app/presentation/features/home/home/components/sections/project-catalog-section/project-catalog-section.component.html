@@ -1,0 +1,106 @@
+<section class="project-catalog">
+  <button type="button" class="section-toggle" (click)="toggleSection.emit()">
+    <span>Proyectos disponibles</span>
+    <span class="section-toggle-right">
+      {{ sectionCollapsed ? 'Mostrar' : 'Ocultar' }}
+      <span class="section-arrow">{{ sectionCollapsed ? '▼' : '▲' }}</span>
+    </span>
+  </button>
+
+  <ng-container *ngIf="!sectionCollapsed">
+    <div class="project-search">
+      <label for="project-search-input">Buscar proyectos</label>
+      <input
+        id="project-search-input"
+        type="text"
+        [ngModel]="projectSearchTerm"
+        (ngModelChange)="projectSearchTermChange.emit($event)"
+        placeholder="Buscar por PRO, nombre, HU, descripción, status, accesos..."
+      />
+    </div>
+
+    <p *ngIf="isLoadingProjects || isLoading">Cargando proyectos...</p>
+
+    <div class="projects-grid" *ngIf="!isLoadingProjects && !isLoading && filteredProjects.length > 0">
+      <article class="project-card" *ngFor="let project of filteredProjects; trackBy: trackByProject">
+        <div class="project-card__header">
+          <h3>{{ project.projectName }}</h3>
+          <small>{{ project.pro }}</small>
+        </div>
+
+        <p><strong>HU registradas:</strong> {{ project.hu.length }}</p>
+        <p><strong>Accesos:</strong> {{ project.accesos.join(', ') || 'Sin accesos' }}</p>
+
+        <div class="actions">
+          <button type="button" class="btn-primary" (click)="viewProjectBoard.emit(project.pro)">Ir al tablero</button>
+          <button type="button" class="btn-secondary" *ngIf="canEditProjectHu" (click)="startEditProject.emit(project)">Editar</button>
+          <button type="button" class="btn-danger" *ngIf="isScrum" (click)="deleteProject.emit(project.pro)">Eliminar</button>
+        </div>
+
+        <form
+          *ngIf="canEditProjectHu && editingProjectPro === project.pro"
+          [formGroup]="editProjectForm"
+          (ngSubmit)="saveProject.emit()"
+          class="project-form project-edit-form"
+        >
+          <input *ngIf="!isPo" type="text" formControlName="projectName" placeholder="Nombre del proyecto" />
+
+          <div *ngIf="!isPo" class="cedula-editor cedula-editor--edit" formArrayName="accesos">
+            <h4>Cédulas con acceso</h4>
+
+            <div class="cedula-item" *ngFor="let accessControl of editAccessControls.controls; let i = index; trackBy: trackByIndex">
+              <input type="text" [formControlName]="i" placeholder="Cédula" />
+              <button type="button" class="btn-secondary" (click)="removeEditAccess.emit(i)">Eliminar</button>
+            </div>
+
+            <button type="button" class="btn-secondary" (click)="addEditAccess.emit()">Agregar cédula</button>
+          </div>
+
+          <div class="hu-editor" formArrayName="huItems">
+            <h4>Historias de usuario</h4>
+
+            <div class="hu-item" *ngFor="let huControl of huItemsControls.controls; let i = index; trackBy: trackByIndex" [formGroupName]="i">
+              <input type="text" formControlName="hu" placeholder="HU" />
+              <input type="text" formControlName="descripcion" placeholder="Descripción" />
+              <div *ngIf="!isPo" class="status-field">
+                <span class="status-chip" [ngClass]="getStatusClass(huControl.value.status)">
+                  <span class="status-icon" aria-hidden="true">{{ getStatusIcon(huControl.value.status) }}</span>
+                  <span class="status-label">{{ getStatusLabel(huControl.value.status) }}</span>
+                </span>
+                <select formControlName="status">
+                  <option *ngFor="let status of projectStatuses; trackBy: trackByIndex" [value]="status">{{ getStatusOptionLabel(status) }}</option>
+                </select>
+              </div>
+              <div *ngIf="isPo" class="status-readonly" [ngClass]="getStatusClass(huControl.value.status)">
+                <span class="status-chip" [ngClass]="getStatusClass(huControl.value.status)">
+                  <span class="status-icon" aria-hidden="true">{{ getStatusIcon(huControl.value.status) }}</span>
+                  <span class="status-label">{{ getStatusLabel(huControl.value.status) }}</span>
+                </span>
+              </div>
+              <button
+                type="button"
+                class="btn-secondary btn-remove-hu"
+                aria-label="Eliminar HU"
+                title="Eliminar HU"
+                (click)="removeHuItem.emit(i)"
+              >
+                <span aria-hidden="true">🗑️</span>
+              </button>
+            </div>
+
+            <button type="button" class="btn-secondary" (click)="addHuItem.emit()">Agregar HU</button>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn-primary">Guardar cambios</button>
+            <button type="button" class="btn-secondary" (click)="cancelEditProject.emit()">Cancelar</button>
+          </div>
+        </form>
+      </article>
+    </div>
+
+    <p *ngIf="!isLoadingProjects && !isLoading && filteredProjects.length === 0">
+      No hay proyectos que coincidan con la búsqueda.
+    </p>
+  </ng-container>
+</section>

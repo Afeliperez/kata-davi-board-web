@@ -1,0 +1,75 @@
+<section class="scrum-management">
+  <button type="button" class="section-toggle" (click)="toggleSection.emit()">
+    <span>Gestión de proyectos (Scrum)</span>
+    <span class="section-toggle-right">
+      {{ sectionCollapsed ? 'Mostrar' : 'Ocultar' }}
+      <span class="section-arrow">{{ sectionCollapsed ? '▼' : '▲' }}</span>
+    </span>
+  </button>
+
+  <ng-container *ngIf="!sectionCollapsed">
+    <form [formGroup]="createProjectForm" (ngSubmit)="createProject.emit()" class="project-form create-project-form">
+      <div class="project-form__header">
+        <h3>Crear nuevo proyecto</h3>
+        <p>Define el proyecto y su configuración inicial para el tablero.</p>
+      </div>
+
+      <label class="form-field">
+        <span>Código del proyecto</span>
+        <input type="text" formControlName="pro" placeholder="Ej: PRO_TEST" />
+      </label>
+
+      <label class="form-field">
+        <span>Nombre del proyecto</span>
+        <input type="text" formControlName="projectName" placeholder="Ej: Proyecto Demo" />
+      </label>
+
+      <div class="hu-editor create-hu-editor" formArrayName="huItems">
+        <h4>Historias de usuario</h4>
+
+        <div class="hu-item" *ngFor="let huControl of createHuItemsControls.controls; let i = index; trackBy: trackByIndex" [formGroupName]="i">
+          <input type="text" formControlName="hu" placeholder="HU" />
+          <input type="text" formControlName="descripcion" placeholder="Descripción" />
+          <div class="status-field">
+            <span class="status-chip" [ngClass]="getStatusClass(huControl.value.status)">
+              <span class="status-icon" aria-hidden="true">{{ getStatusIcon(huControl.value.status) }}</span>
+              <span>{{ getStatusLabel(huControl.value.status) }}</span>
+            </span>
+            <select formControlName="status">
+              <option *ngFor="let status of projectStatuses; trackBy: trackByIndex" [value]="status">{{ getStatusOptionLabel(status) }}</option>
+            </select>
+          </div>
+          <button
+            type="button"
+            class="btn-secondary btn-remove-hu"
+            aria-label="Eliminar HU"
+            title="Eliminar HU"
+            (click)="removeCreateHuItem.emit(i)"
+          >
+            <span aria-hidden="true">🗑️</span>
+          </button>
+        </div>
+
+        <button type="button" class="btn-secondary" (click)="addCreateHuItem.emit()">Agregar HU</button>
+      </div>
+
+      <div class="cedula-editor" formArrayName="accesos">
+        <h4>Cédulas con acceso</h4>
+
+        <div class="cedula-item" *ngFor="let accessControl of createAccessControls.controls; let i = index; trackBy: trackByIndex">
+          <input type="text" [formControlName]="i" placeholder="Cédula" />
+          <button type="button" class="btn-secondary" (click)="removeCreateAccess.emit(i)">Eliminar</button>
+        </div>
+
+        <button type="button" class="btn-secondary" (click)="addCreateAccess.emit()">Agregar cédula</button>
+      </div>
+
+      <div class="project-form__actions">
+        <button type="submit" class="btn-primary" [disabled]="createProjectForm.invalid">Crear proyecto</button>
+      </div>
+    </form>
+
+    <p *ngIf="isLoadingProjects">Cargando proyectos...</p>
+    <p class="error" *ngIf="scrumError">{{ scrumError }}</p>
+  </ng-container>
+</section>

@@ -1,0 +1,17 @@
+<div class="page">
+  <app-home-header
+    [role]="userRole"
+    [userName]="currentUserName"
+    [searchTerm]="adminSearchTerm"
+    (searchChanged)="onAdminSearchChanged($event)"
+    (logoutRequested)="logout()"
+  ></app-home-header>
+  <app-home-body
+    [role]="userRole"
+    [isAdmin]="userRole === 'ADMIN'"
+    [isLoading]="isLoading"
+    [payload]="payload"
+    [searchTerm]="adminSearchTerm"
+  ></app-home-body>
+  <app-home-footer></app-home-footer>
+</div>

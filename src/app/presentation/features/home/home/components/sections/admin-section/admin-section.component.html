@@ -1,0 +1,64 @@
+<section class="admin-dashboard">
+  <button type="button" class="section-toggle" (click)="toggleSection.emit()">
+    <span>Dashboard de usuarios (ADMIN)</span>
+    <span class="section-toggle-right">
+      {{ sectionCollapsed ? 'Mostrar' : 'Ocultar' }}
+      <span class="section-arrow">{{ sectionCollapsed ? '▼' : '▲' }}</span>
+    </span>
+  </button>
+
+  <ng-container *ngIf="!sectionCollapsed">
+    <form [formGroup]="createForm" (ngSubmit)="createUser.emit()" class="admin-form">
+      <input type="text" formControlName="cc" placeholder="Cédula" />
+      <input type="email" formControlName="email" placeholder="Correo" />
+      <input type="text" formControlName="userName" placeholder="Nombre" />
+      <select formControlName="role">
+        <option *ngFor="let role of roleOptions" [value]="role">{{ role }}</option>
+      </select>
+      <input type="password" formControlName="password" placeholder="Contraseña" />
+      <button type="submit" class="btn-primary">Crear usuario</button>
+    </form>
+
+    <p *ngIf="isLoadingUsers">Cargando usuarios...</p>
+    <p class="error" *ngIf="adminError">{{ adminError }}</p>
+
+    <table *ngIf="!isLoadingUsers && filteredUsers.length > 0" class="users-table">
+      <thead>
+        <tr>
+          <th>Cédula</th>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Rol</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers">
+          <td>{{ user.cc }}</td>
+          <td>{{ user.userName }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
+          <td class="actions">
+            <button type="button" class="btn-secondary" (click)="startEdit.emit(user)">Editar</button>
+            <button type="button" class="btn-danger" (click)="deleteUser.emit(user.cc)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p *ngIf="!isLoadingUsers && filteredUsers.length === 0">No hay usuarios para mostrar.</p>
+
+    <form *ngIf="editingCc" [formGroup]="editForm" (ngSubmit)="saveEdit.emit()" class="admin-form">
+      <h3>Editar usuario {{ editingCc }}</h3>
+      <input type="email" formControlName="email" placeholder="Correo" />
+      <input type="text" formControlName="userName" placeholder="Nombre" />
+      <select formControlName="role">
+        <option *ngFor="let role of roleOptions" [value]="role">{{ role }}</option>
+      </select>
+      <div class="actions">
+        <button type="submit" class="btn-primary">Guardar cambios</button>
+        <button type="button" class="btn-secondary" (click)="cancelEdit.emit()">Cancelar</button>
+      </div>
+    </form>
+  </ng-container>
+</section>

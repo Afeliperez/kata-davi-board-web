@@ -1,0 +1,53 @@
+<section class="scrum-board">
+  <h2>Tablero del proyecto</h2>
+
+  <p *ngIf="!project">Selecciona un proyecto para visualizar su tablero.</p>
+
+  <ng-container *ngIf="project">
+    <p class="project-meta"><strong>PRO seleccionado:</strong> {{ project.pro }} - {{ project.projectName }}</p>
+    <p class="permission-warning" *ngIf="permissionMessage">{{ permissionMessage }}</p>
+    <div class="board" cdkDropListGroup>
+      <section
+        class="column"
+        *ngFor="let column of columns; trackBy: trackByColumn"
+        cdkDropList
+        [cdkDropListData]="column.cards"
+        [cdkDropListDisabled]="isColumnCollapsed(column.statusValue)"
+        (cdkDropListDropped)="onDrop($event, column.statusValue)"
+      >
+        <button
+          type="button"
+          class="column-toggle"
+          (click)="toggleColumn(column.statusValue)"
+          [attr.aria-expanded]="!isColumnCollapsed(column.statusValue)"
+        >
+          <span class="column-title">{{ column.title }} ({{ column.cards.length }})</span>
+          <span class="column-toggle-right">
+            {{ isColumnCollapsed(column.statusValue) ? 'Mostrar' : 'Ocultar' }}
+            <span class="column-arrow">{{ isColumnCollapsed(column.statusValue) ? '▼' : '▲' }}</span>
+          </span>
+        </button>
+
+        <ng-container *ngIf="!isColumnCollapsed(column.statusValue)">
+          <article
+            class="card"
+            *ngFor="let item of column.cards; trackBy: trackByCard"
+            cdkDrag
+            [cdkDragData]="item"
+            [cdkDragDisabled]="!canDragFromStatus(item.status)"
+            [ngClass]="item.statusClass"
+          >
+            <div class="card__header">
+              <strong>{{ item.hu }}</strong>
+              <span class="status-badge" [ngClass]="item.statusClass" [attr.aria-label]="'Estado: ' + item.statusLabel">
+                <span class="status-icon" aria-hidden="true">{{ item.statusIcon }}</span>
+                <span>{{ item.statusLabel }}</span>
+              </span>
+            </div>
+            <p class="card__description">{{ item.descripcion }}</p>
+          </article>
+        </ng-container>
+      </section>
+    </div>
+  </ng-container>
+</section>

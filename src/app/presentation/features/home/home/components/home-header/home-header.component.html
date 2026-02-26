@@ -1,0 +1,20 @@
+<header class="header">
+  <div class="header-top">
+    <div class="title-block">
+      <h1>Kata Davi Board</h1>
+      <p *ngIf="userName" class="user-name"><strong>Usuario:</strong> {{ userName }}</p>
+    </div>
+    <button type="button" (click)="requestLogout()">Cerrar sesión</button>
+  </div>
+
+  <section class="admin-search" *ngIf="isAdmin">
+    <label for="admin-search">Buscador de usuarios (ADMIN)</label>
+    <input
+      id="admin-search"
+      type="text"
+      [ngModel]="searchTerm"
+      (ngModelChange)="onSearchChange($event)"
+      placeholder="Buscar por cédula, nombre, correo, rol o cualquier campo"
+    />
+  </section>
+</header>
